@@ -27,12 +27,12 @@ export default function HeroSection({ colors: c, theme }: HeroSectionProps) {
         {/* Nhãn truyền thừa */}
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1 }}
-          className="flex items-center justify-center gap-3 mb-5">
-          <div className="h-px w-10 sm:w-16" style={{ background: `linear-gradient(to right, transparent, ${c.goldLine})` }} />
-          <span className="text-[10px] sm:text-[11px] tracking-[0.35em] uppercase font-semibold" style={{ color: c.tagText }}>
+          className="flex items-center justify-center gap-2 sm:gap-3 mb-5 px-2">
+          <div className="h-px w-6 sm:w-16 flex-shrink-0" style={{ background: `linear-gradient(to right, transparent, ${c.goldLine})` }} />
+          <span className="text-[9px] sm:text-[11px] tracking-[0.12em] sm:tracking-[0.35em] uppercase font-semibold text-center" style={{ color: c.tagText }}>
             TỬ VI ĐẨU SỐ · NGHÊ HẢI HÀ 《THIÊN KỶ》 CHÍNH TÔNG
           </span>
-          <div className="h-px w-10 sm:w-16" style={{ background: `linear-gradient(to left, transparent, ${c.goldLine})` }} />
+          <div className="h-px w-6 sm:w-16 flex-shrink-0" style={{ background: `linear-gradient(to left, transparent, ${c.goldLine})` }} />
         </motion.div>
 
         {/* Tiêu đề chính trang web: ZHANXING MINGSHU */}
@@ -42,13 +42,13 @@ export default function HeroSection({ colors: c, theme }: HeroSectionProps) {
           <h1
             className={`grad-text ${theme === 'dark' ? 'grad-text-dark' : 'grad-text-light'} font-black leading-none mb-3`}
             style={{
-              fontSize: 'clamp(46px, 9vw, 108px)',
-              letterSpacing: '0.06em',
+              fontSize: 'clamp(32px, 8.5vw, 108px)',
+              letterSpacing: '0.04em',
               textShadow: theme === 'dark' ? '0 0 50px rgba(212,168,67,0.35)' : 'none',
             }}>
             ZHANXING MINGSHU
           </h1>
-          <div className="text-xs sm:text-sm tracking-[0.55em] mb-6 font-semibold" style={{ color: c.goldSolid, opacity: 0.95 }}>
+          <div className="text-[11px] sm:text-sm tracking-[0.25em] sm:tracking-[0.55em] mb-6 font-semibold" style={{ color: c.goldSolid, opacity: 0.95 }}>
             占星明舒 · CỖ MÁY CHIÊM TINH TỬ VI
           </div>
         </motion.div>

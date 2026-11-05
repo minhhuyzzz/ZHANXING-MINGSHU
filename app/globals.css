@@ -434,3 +434,112 @@ body {
    select 本身是半透明底 + 浅色字，Windows 上原生下拉列表是白底，浅灰字配白底看不清（#14） */
 [data-theme="dark"] select { color-scheme: dark; }
 [data-theme="dark"] select option { background-color: var(--bg-2); color: var(--tx-1); }
+
+
+/* ─── HỢP BÀN RESPONSIVE CHO ĐIỆN THOẠI & TABLET ─────────── */
+.heming-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.heming-hero-grid {
+  display: grid;
+  grid-template-columns: minmax(200px, 1fr) auto minmax(200px, 1fr);
+  align-items: center;
+  gap: 24px;
+}
+
+.heming-radar-grid {
+  display: grid;
+  grid-template-columns: minmax(320px, 380px) 1fr;
+  gap: 24px;
+}
+
+.heming-palace-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 16px;
+}
+
+@media (max-width: 768px) {
+  .heming-container {
+    padding: 16px 10px 60px !important;
+  }
+
+  .heming-card {
+    padding: 16px 14px !important;
+    border-radius: 18px !important;
+  }
+
+  .birth-form-container {
+    padding: 18px 12px !important;
+    border-radius: 18px !important;
+  }
+
+  .heming-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+
+  .heming-hero-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 14px !important;
+  }
+
+  /* Đưa vòng tròn điểm số lên trên cùng của Hero để người dùng thấy ngay */
+  .heming-hero-grid > :nth-child(2) {
+    order: -1 !important;
+    margin-bottom: 2px !important;
+  }
+
+  .heming-hero-grid > :nth-child(1),
+  .heming-hero-grid > :nth-child(3) {
+    width: 100% !important;
+  }
+
+  .heming-radar-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+
+  .heming-palace-grid {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  .heming-tabs-bar {
+    overflow-x: auto !important;
+    flex-wrap: nowrap !important;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 4px;
+  }
+  .heming-tabs-bar::-webkit-scrollbar {
+    display: none;
+  }
+  .heming-tabs-bar button {
+    flex-shrink: 0;
+  }
+
+  .heming-quick-questions {
+    overflow-x: auto !important;
+    flex-wrap: nowrap !important;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 6px;
+  }
+  .heming-quick-questions::-webkit-scrollbar {
+    display: none;
+  }
+  .heming-quick-questions button {
+    flex-shrink: 0;
+  }
+
+  .birth-form-container select {
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+    font-size: 12px !important;
+  }
+}

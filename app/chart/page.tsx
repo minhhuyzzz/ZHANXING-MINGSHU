@@ -106,7 +106,7 @@ export default function ChartPage() {
             <ChartBoard chart={chart} onPalaceSelect={setSelectedPalace} />
             <ChartSummary chart={chart} />
           </div>
-          <div style={{ position: 'sticky', top: 20, height: 'calc(100vh - 40px)', minHeight: 650 }}>
+          <div className="lg:sticky lg:top-5 lg:h-[calc(100vh-40px)] min-h-[500px]">
             <InsightPanel chart={chart} selectedPalace={selectedPalace} />
           </div>
         </div>

@@ -109,8 +109,18 @@ function CelestialRadarChart({
   }).join(' ');
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-      <svg width="350" height="350" viewBox="0 0 350 350" style={{ overflow: 'visible', maxWidth: '100%' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', maxWidth: '340px', margin: '0 auto' }}>
+      <svg
+        viewBox="0 0 350 350"
+        style={{
+          width: '100%',
+          maxWidth: '340px',
+          height: 'auto',
+          overflow: 'visible',
+          display: 'block',
+          margin: '0 auto',
+        }}
+      >
         <defs>
           <radialGradient id="radarFill" cx="50%" cy="50%" r="50%">
             <stop offset="0%" stopColor="#eab308" stopOpacity="0.5" />
@@ -263,16 +273,16 @@ function SynastryPalaceBridge({
 
       {/* Cầu Nối Năng Lượng Hai Bên */}
       <div style={{
-        display: 'grid', gridTemplateColumns: '1fr auto 1fr', alignItems: 'center', gap: '12px',
+        display: 'grid', gridTemplateColumns: '1fr auto 1fr', alignItems: 'center', gap: '8px',
         padding: '12px 14px', borderRadius: '12px',
         background: isDark ? 'rgba(0,0,0,0.25)' : 'rgba(0,0,0,0.02)',
       }}>
         {/* Bên A */}
-        <div style={{ textAlign: 'left' }}>
-          <div style={{ fontSize: '11px', color: '#60a5fa', fontWeight: 700, letterSpacing: '0.05em' }}>
+        <div style={{ textAlign: 'left', minWidth: 0, overflow: 'hidden' }}>
+          <div style={{ fontSize: '11px', color: '#60a5fa', fontWeight: 700, letterSpacing: '0.05em' }} className="truncate">
             {nameA} ({pal.branchA || 'Cung vị'})
           </div>
-          <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--tx-0)', marginTop: '2px' }}>
+          <div style={{ fontSize: '12.5px', fontWeight: 600, color: 'var(--tx-0)', marginTop: '2px', wordBreak: 'break-word' }}>
             {pal.starsA.slice(0, 3).join(' · ')}
           </div>
         </div>
@@ -280,27 +290,27 @@ function SynastryPalaceBridge({
         {/* Trục Giao Thoa */}
         <div style={{
           display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-          padding: '0 8px',
+          padding: '0 4px', flexShrink: 0,
         }}>
           <div style={{
-            width: '28px', height: '28px', borderRadius: '50%',
+            width: '26px', height: '26px', borderRadius: '50%',
             background: 'linear-gradient(135deg, rgba(212,168,67,0.3), rgba(212,168,67,0.05))',
             border: '1px solid var(--ac)', display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: '12px', color: 'var(--ac)',
+            fontSize: '11px', color: 'var(--ac)',
           }}>
             ⇄
           </div>
-          <div style={{ fontSize: '9.5px', color: 'var(--tx-2)', marginTop: '2px', whiteSpace: 'nowrap' }}>
+          <div style={{ fontSize: '9px', color: 'var(--tx-2)', marginTop: '2px', whiteSpace: 'nowrap' }}>
             {pal.synergyTitle}
           </div>
         </div>
 
         {/* Bên B */}
-        <div style={{ textAlign: 'right' }}>
-          <div style={{ fontSize: '11px', color: '#f59e0b', fontWeight: 700, letterSpacing: '0.05em' }}>
+        <div style={{ textAlign: 'right', minWidth: 0, overflow: 'hidden' }}>
+          <div style={{ fontSize: '11px', color: '#f59e0b', fontWeight: 700, letterSpacing: '0.05em' }} className="truncate">
             {nameB} ({pal.branchB || 'Cung vị'})
           </div>
-          <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--tx-0)', marginTop: '2px' }}>
+          <div style={{ fontSize: '12.5px', fontWeight: 600, color: 'var(--tx-0)', marginTop: '2px', wordBreak: 'break-word' }}>
             {pal.starsB.slice(0, 3).join(' · ')}
           </div>
         </div>
@@ -356,35 +366,35 @@ function CelestialFusionModal({
       />
 
       {/* Hai Quả Cầu Tinh Vân Lao Vào Nhau */}
-      <div style={{ position: 'relative', width: '360px', height: '160px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ position: 'relative', width: 'min(360px, 92vw)', height: '160px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         {/* Tinh Cầu Bên A */}
         <motion.div
-          animate={{ x: [-120, -20, -10], scale: [0.85, 1.1, 1] }}
+          animate={{ x: [-95, -18, -10], scale: [0.85, 1.05, 1] }}
           transition={{ duration: 1.4, ease: 'easeInOut' }}
           style={{
-            position: 'absolute', width: '110px', height: '110px', borderRadius: '50%',
+            position: 'absolute', width: '96px', height: '96px', borderRadius: '50%',
             background: 'radial-gradient(circle at 35% 35%, #93c5fd, #1d4ed8, #030712)',
             boxShadow: '0 0 35px rgba(59,130,246,0.8), inset 0 0 20px rgba(255,255,255,0.6)',
             display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-            color: '#fff', textAlign: 'center', padding: '8px', zIndex: 2,
+            color: '#fff', textAlign: 'center', padding: '6px', zIndex: 2,
           }}
         >
-          <div style={{ fontSize: '10px', letterSpacing: '0.1em', opacity: 0.8 }}>MỆNH A</div>
-          <div style={{ fontSize: '13px', fontWeight: 800 }}>{starA}</div>
-          <div style={{ fontSize: '10px', opacity: 0.7 }}>{yearA}</div>
+          <div style={{ fontSize: '9px', letterSpacing: '0.1em', opacity: 0.8 }}>MỆNH A</div>
+          <div style={{ fontSize: '12.5px', fontWeight: 800 }}>{starA}</div>
+          <div style={{ fontSize: '9.5px', opacity: 0.7 }}>{yearA}</div>
         </motion.div>
 
         {/* Lõi Hợp Nhất */}
         <motion.div
           initial={{ scale: 0, opacity: 0 }}
-          animate={{ scale: [0, 1.3, 1], opacity: [0, 1, 0.9] }}
+          animate={{ scale: [0, 1.25, 1], opacity: [0, 1, 0.9] }}
           transition={{ delay: 1.1, duration: 0.8 }}
           style={{
-            position: 'absolute', width: '70px', height: '70px', borderRadius: '50%',
+            position: 'absolute', width: '64px', height: '64px', borderRadius: '50%',
             background: 'radial-gradient(circle, #fff 0%, #fef08a 40%, #eab308 100%)',
             boxShadow: '0 0 50px #eab308, 0 0 100px rgba(234,179,8,0.6)',
             zIndex: 4, display: 'flex', alignItems: 'center', justifyContent: 'center',
-            color: '#713f12', fontSize: '20px', fontWeight: 900,
+            color: '#713f12', fontSize: '18px', fontWeight: 900,
           }}
         >
           ☯
@@ -392,19 +402,19 @@ function CelestialFusionModal({
 
         {/* Tinh Cầu Bên B */}
         <motion.div
-          animate={{ x: [120, 20, 10], scale: [0.85, 1.1, 1] }}
+          animate={{ x: [95, 18, 10], scale: [0.85, 1.05, 1] }}
           transition={{ duration: 1.4, ease: 'easeInOut' }}
           style={{
-            position: 'absolute', width: '110px', height: '110px', borderRadius: '50%',
+            position: 'absolute', width: '96px', height: '96px', borderRadius: '50%',
             background: 'radial-gradient(circle at 35% 35%, #fde047, #b45309, #030712)',
             boxShadow: '0 0 35px rgba(234,179,8,0.8), inset 0 0 20px rgba(255,255,255,0.6)',
             display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-            color: '#fff', textAlign: 'center', padding: '8px', zIndex: 2,
+            color: '#fff', textAlign: 'center', padding: '6px', zIndex: 2,
           }}
         >
-          <div style={{ fontSize: '10px', letterSpacing: '0.1em', opacity: 0.8 }}>MỆNH B</div>
-          <div style={{ fontSize: '13px', fontWeight: 800 }}>{starB}</div>
-          <div style={{ fontSize: '10px', opacity: 0.7 }}>{yearB}</div>
+          <div style={{ fontSize: '9px', letterSpacing: '0.1em', opacity: 0.8 }}>MỆNH B</div>
+          <div style={{ fontSize: '12.5px', fontWeight: 800 }}>{starB}</div>
+          <div style={{ fontSize: '9.5px', opacity: 0.7 }}>{yearB}</div>
         </motion.div>
       </div>
 
@@ -623,20 +633,21 @@ export default function HemingPage() {
         background: isDark ? 'rgba(4,7,14,0.92)' : 'rgba(250,245,235,0.95)',
         backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
         borderBottom: '1px solid var(--bdr)',
-        display: 'flex', alignItems: 'center', padding: '0 24px', height: '58px', gap: '16px',
+        display: 'flex', alignItems: 'center', padding: '0 14px', height: '56px', gap: '10px',
       }}>
         {viewMode === 'result' ? (
           <button
             onClick={() => setViewMode('form')}
             style={{
-              display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px',
+              display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px',
               color: 'var(--ac)', background: 'rgba(212,168,67,0.12)', border: '1px solid rgba(212,168,67,0.3)',
-              padding: '6px 14px', borderRadius: '10px', cursor: 'pointer', fontWeight: 600,
-              transition: 'all 0.2s',
+              padding: '6px 11px', borderRadius: '10px', cursor: 'pointer', fontWeight: 600,
+              transition: 'all 0.2s', whiteSpace: 'nowrap', flexShrink: 0,
             }}
           >
             <span>‹</span>
-            <span>Chỉnh sửa thông tin / Hợp bàn khác</span>
+            <span className="hidden sm:inline">Chỉnh sửa thông tin / Hợp bàn khác</span>
+            <span className="sm:hidden">Sửa thông tin</span>
           </button>
         ) : (
           <button
@@ -644,6 +655,7 @@ export default function HemingPage() {
             style={{
               display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px',
               color: 'var(--tx-2)', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 500,
+              whiteSpace: 'nowrap', flexShrink: 0,
             }}
           >
             <span style={{ fontSize: '16px' }}>‹</span>
@@ -651,21 +663,28 @@ export default function HemingPage() {
           </button>
         )}
 
-        <div style={{ width: '1px', height: '20px', background: 'var(--bdr-med)' }} />
-        <span style={{ fontSize: '13.5px', color: 'var(--ac)', letterSpacing: '0.12em', fontWeight: 800 }}>
-          ZHANXING MINGSHU · SONG TINH BÀN
+        <div style={{ width: '1px', height: '18px', background: 'var(--bdr-med)', flexShrink: 0 }} />
+        <span
+          className="truncate"
+          style={{
+            fontSize: '13px', color: 'var(--ac)', letterSpacing: '0.08em', fontWeight: 800,
+            minWidth: 0,
+          }}
+        >
+          <span className="hidden md:inline">ZHANXING MINGSHU · SONG TINH BÀN</span>
+          <span className="md:hidden">ZHANXING MINGSHU</span>
         </span>
 
         <div style={{ flex: 1 }} />
 
         {viewMode === 'result' && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
             <button
               onClick={handleCopySummary}
               style={{
-                fontSize: '12px', padding: '5px 12px', borderRadius: '8px',
+                fontSize: '11.5px', padding: '5px 10px', borderRadius: '8px',
                 border: '1px solid var(--bdr-med)', background: 'var(--bg-1)',
-                color: 'var(--tx-1)', cursor: 'pointer',
+                color: 'var(--tx-1)', cursor: 'pointer', whiteSpace: 'nowrap',
               }}
             >
               {copied ? '✓ Đã sao chép' : '📋 Chia sẻ'}
@@ -674,12 +693,13 @@ export default function HemingPage() {
               onClick={() => runAnalysis()}
               disabled={analyzing}
               style={{
-                fontSize: '12px', padding: '5px 14px', borderRadius: '8px',
+                fontSize: '11.5px', padding: '5px 12px', borderRadius: '8px',
                 border: 'none', background: 'linear-gradient(135deg, #b8892a, #f0d070)',
                 color: '#08080a', fontWeight: 700, cursor: analyzing ? 'not-allowed' : 'pointer',
+                whiteSpace: 'nowrap',
               }}
             >
-              {analyzing ? 'Đang phân tích…' : '↺ Luận giải lại'}
+              {analyzing ? '...' : '↺ Luận lại'}
             </button>
           </div>
         )}
@@ -689,7 +709,7 @@ export default function HemingPage() {
           CHẾ ĐỘ 1: FORM NHẬP THÔNG TIN (KHI VIEWMODE === 'FORM')
       ══════════════════════════════════════════════════════════ */}
       {viewMode === 'form' && (
-        <div style={{ maxWidth: '1140px', margin: '0 auto', padding: '36px 20px 80px' }}>
+        <div style={{ maxWidth: '1140px', margin: '0 auto', padding: '36px 20px 80px' }} className="heming-container">
           {/* Banner quay lại kết quả nếu đã có */}
           {chartA && chartB && analysis && (
             <div style={{
@@ -718,12 +738,12 @@ export default function HemingPage() {
           )}
 
           {/* Tiêu đề & Giới thiệu */}
-          <div style={{ textAlign: 'center', marginBottom: '36px' }}>
+          <div style={{ textAlign: 'center', marginBottom: '32px' }}>
             <div style={{ fontSize: '32px', color: 'var(--ac)', opacity: 0.8, marginBottom: '8px' }}>☯</div>
-            <h1 style={{ fontSize: '26px', fontWeight: 800, letterSpacing: '0.15em', color: 'var(--tx-0)', marginBottom: '8px' }}>
+            <h1 style={{ fontSize: 'clamp(20px, 5vw, 26px)', fontWeight: 800, letterSpacing: '0.12em', color: 'var(--tx-0)', marginBottom: '8px' }}>
               HỢP BÀN TỬ VI · ZHANXING MINGSHU
             </h1>
-            <p style={{ fontSize: '13.5px', color: 'var(--tx-2)', lineHeight: 1.7, maxWidth: '780px', margin: '0 auto' }}>
+            <p style={{ fontSize: '13px', color: 'var(--tx-2)', lineHeight: 1.7, maxWidth: '780px', margin: '0 auto' }}>
               Nhập ngày giờ sinh chuẩn xác của hai người. Hệ thống sẽ tính toán toàn diện ngũ hành nạp âm, địa chi tam hợp, thiên can hóa hợp, đối chiếu 12 cung vị và lập Tinh Đồ Hợp Bàn độc bản.
             </p>
           </div>
@@ -732,7 +752,7 @@ export default function HemingPage() {
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', marginBottom: '28px' }}
             className="heming-grid">
             {/* Bên A */}
-            <div style={cardStyle}>
+            <div style={cardStyle} className="heming-card">
               <span style={labelStyle}>Mệnh Chủ A (Bên Thứ Nhất)</span>
               <BirthForm
                 hideSubmit
@@ -742,7 +762,7 @@ export default function HemingPage() {
             </div>
 
             {/* Bên B */}
-            <div style={cardStyle}>
+            <div style={cardStyle} className="heming-card">
               <span style={labelStyle}>Mệnh Chủ B (Bên Thứ Hai)</span>
               <BirthForm
                 hideSubmit
@@ -766,11 +786,12 @@ export default function HemingPage() {
               }}
               disabled={analyzing}
               style={{
-                padding: '16px 52px', borderRadius: '9999px', border: 'none',
+                padding: '15px 36px', borderRadius: '9999px', border: 'none',
                 background: 'linear-gradient(135deg, #b8892a 0%, #f0d070 50%, #b8892a 100%)',
-                color: '#08080a', fontSize: '15px', fontWeight: 800,
-                letterSpacing: '0.15em', cursor: analyzing ? 'not-allowed' : 'pointer',
+                color: '#08080a', fontSize: '14px', fontWeight: 800,
+                letterSpacing: '0.12em', cursor: analyzing ? 'not-allowed' : 'pointer',
                 boxShadow: '0 8px 30px rgba(212,168,67,0.35)',
+                maxWidth: '100%',
               }}
             >
               {analyzing ? '✦ ĐANG KHỞI TẠO TINH BÀN…' : '✦ BẮT ĐẦU PHÂN TÍCH HỢP BÀN ✦'}
@@ -788,7 +809,7 @@ export default function HemingPage() {
           CHẾ ĐỘ 2: TRANG KẾT QUẢ RIÊNG BIỆT (KHI VIEWMODE === 'RESULT')
       ══════════════════════════════════════════════════════════ */}
       {viewMode === 'result' && (
-        <div style={{ maxWidth: '1180px', margin: '0 auto', padding: '24px 20px 80px' }}>
+        <div style={{ maxWidth: '1180px', margin: '0 auto', padding: '24px 20px 80px' }} className="heming-container">
 
           {/* ── 1. HERO SYNTHESIS HEADER (SONG TINH GIAO THOA 3D) ── */}
           <div style={{
@@ -798,7 +819,7 @@ export default function HemingPage() {
               ? 'radial-gradient(ellipse at 50% 0%, rgba(30,58,138,0.2) 0%, rgba(10,14,26,0.95) 75%)'
               : 'radial-gradient(ellipse at 50% 0%, rgba(254,243,199,0.7) 0%, rgba(255,255,255,0.98) 75%)',
             border: `1px solid ${compatResult?.levelColor || 'var(--ac)'}50`,
-          }}>
+          }} className="heming-card">
             <div style={{
               display: 'grid', gridTemplateColumns: 'minmax(200px, 1fr) auto minmax(200px, 1fr)',
               alignItems: 'center', gap: '24px',
@@ -883,7 +904,7 @@ export default function HemingPage() {
             gap: '24px', marginBottom: '28px',
           }} className="heming-radar-grid">
             {/* Cột Radar */}
-            <div style={{ ...cardStyle, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ ...cardStyle, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }} className="heming-card">
               <div style={{ fontSize: '12px', fontWeight: 800, color: 'var(--ac)', letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: '12px' }}>
                 ✦ RADAR HÒA HỢP 6 TRỤC
               </div>
@@ -893,7 +914,7 @@ export default function HemingPage() {
             </div>
 
             {/* Cột 6 Yếu Tố Chi Tiết */}
-            <div style={{ ...cardStyle, display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            <div style={{ ...cardStyle, display: 'flex', flexDirection: 'column', gap: '10px' }} className="heming-card">
               <div style={{ fontSize: '12px', fontWeight: 800, color: 'var(--ac)', letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: '4px' }}>
                 ✦ 6 YẾU TỐ ĐÁNH GIÁ CHIÊM TINH HỌC
               </div>
@@ -929,7 +950,7 @@ export default function HemingPage() {
           </div>
 
           {/* ── 3. BẢN ĐỒ ĐỐI CHIẾU 12 CUNG VỊ SONG TINH ĐỘC BẢN ── */}
-          <div style={{ ...cardStyle, marginBottom: '28px' }}>
+          <div style={{ ...cardStyle, marginBottom: '28px' }} className="heming-card">
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px', marginBottom: '20px' }}>
               <div>
                 <div style={{ fontSize: '12px', fontWeight: 800, color: 'var(--ac)', letterSpacing: '0.2em', textTransform: 'uppercase' }}>
@@ -941,7 +962,7 @@ export default function HemingPage() {
               </div>
 
               {/* Bộ lọc tabs */}
-              <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+              <div style={{ display: 'flex', gap: '6px' }} className="heming-tabs-bar">
                 {[
                   { key: 'key', label: 'Tam Giác Cốt Lõi' },
                   { key: 'career', label: 'Tài Lộc & Sự Nghiệp' },
@@ -967,7 +988,7 @@ export default function HemingPage() {
             </div>
 
             {/* Danh sách các Cầu Nối Cung Vị */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '16px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '16px' }} className="heming-palace-grid">
               {filteredPalaces.map(pal => (
                 <SynastryPalaceBridge
                   key={pal.id}
@@ -982,7 +1003,7 @@ export default function HemingPage() {
 
           {/* ── 4. BẢNG DÒNG CHẢY TỨ HÓA PHI NHẬP ── */}
           {chartA && chartB && (
-            <div style={{ ...cardStyle, marginBottom: '28px' }}>
+            <div style={{ ...cardStyle, marginBottom: '28px' }} className="heming-card">
               <div style={{ fontSize: '12px', fontWeight: 800, color: 'var(--ac)', letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: '14px' }}>
                 ✦ DÒNG CHẢY TỨ HÓA PHI TINH (PHI LỘC & PHI KỴ)
               </div>
@@ -1021,7 +1042,7 @@ export default function HemingPage() {
           )}
 
           {/* ── 5. NỘI DUNG LUẬN GIẢI CHI TIẾT AI ── */}
-          <div ref={analysisRef} style={{ ...cardStyle, marginBottom: '28px' }}>
+          <div ref={analysisRef} style={{ ...cardStyle, marginBottom: '28px' }} className="heming-card">
             {/* Banner hiển thị câu hỏi đang được phân tích */}
             {activeQuestion && (
               <div style={{
@@ -1084,16 +1105,16 @@ export default function HemingPage() {
           </div>
 
           {/* ── 6. ĐẶT CÂU HỎI TIẾP NỐI TOÀN NĂNG (UNIVERSAL Q&A) ── */}
-          <div style={{ ...cardStyle }}>
+          <div style={{ ...cardStyle }} className="heming-card">
             <div style={{ fontSize: '12px', letterSpacing: '0.15em', color: 'var(--ac)', fontWeight: 800, textTransform: 'uppercase', marginBottom: '8px' }}>
               ✦ ĐẶT CÂU HỎI LÀM RÕ THÊM VỀ MỐI QUAN HỆ NÀY:
             </div>
             <div style={{ fontSize: '12.5px', color: 'var(--tx-2)', marginBottom: '14px' }}>
-              Bạn có thể bấm vào các câu hỏi gợi ý nhanh hoặc tự nhập bất kỳ câu hỏi nào bạn băn khoăn (ví dụ: mẹ chồng nàng dâu, ai nên giữ tiền, sinh con năm nào...):
+              Bạn có thể bấm vào các câu hỏi gợi ý nhanh hoặc tự nhập bất kỳ câu hỏi nào bạn băn khoăn:
             </div>
 
             {/* Câu hỏi gợi ý nhanh */}
-            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '16px' }}>
+            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '16px' }} className="heming-quick-questions">
               {[
                 'Hai người kết hôn có hạnh phúc bền lâu không?',
                 'Có thể hợp tác làm ăn kinh doanh chung không?',
@@ -1129,7 +1150,7 @@ export default function HemingPage() {
             </div>
 
             {/* Input câu hỏi riêng */}
-            <div style={{ display: 'flex', gap: '10px' }}>
+            <div style={{ display: 'flex', gap: '10px' }} className="flex flex-col sm:flex-row">
               <input
                 type="text"
                 value={question}
@@ -1157,6 +1178,7 @@ export default function HemingPage() {
                   }
                 }}
                 disabled={analyzing || !question.trim()}
+                className="w-full sm:w-auto"
                 style={{
                   padding: '12px 24px', borderRadius: '14px', border: 'none',
                   background: (analyzing || !question.trim()) ? 'var(--bg-2)' : 'linear-gradient(135deg, #b8892a, #f0d070)',
