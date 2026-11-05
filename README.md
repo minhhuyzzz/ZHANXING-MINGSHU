@@ -1,5 +1,23 @@
 <div align="center">
 
+# ZHANXING MINGSHU · 占星明舒
+### Cỗ Máy Coi Tử Vi Đẩu Số & Chiêm Tinh Học Thuật Đỉnh Cao Cho Người Việt
+
+> **Kế thừa & Tri ân nguồn mở**: Dự án được xây dựng và phát triển kế thừa trực tiếp từ kho mã nguồn mở [Renhuai123/ziwei-doushu](https://github.com/Renhuai123/ziwei-doushu): *紫微斗数开源排盘引擎 — 基于倪海厦《天纪》体系，含完整排盘算法、四化系统、格局知识库、古籍原文数据*.
+> 
+> **Đột phá mới từ ZHANXING MINGSHU**:
+> 1. **Bản địa hóa 100% Tiếng Việt**: Chuẩn hóa toàn bộ thuật ngữ sao, 12 cung, tứ hóa, thế cục cổ thư sang Hán-Việt chuẩn mực (kèm chữ Hán nguyên bản trong ngoặc đơn để đối chiếu).
+> 2. **Chuẩn hóa Địa Lý Việt Nam**: Tích hợp danh mục 34 tỉnh thành và hiệu chỉnh kinh độ Chân Thái Dương Thời chuẩn xác từng phút.
+> 3. **Y Đạo & Kinh Lạc Tạng Phủ Nghê Hải Hà**: Ứng dụng *Hoàng Đế Nội Kinh* và *Tử Ngọ Lưu Chú* phân tích chuyên sâu cung Tật Ách.
+> 4. **Luận Giải Chuyên Sâu Bằng AI Tự Chủ**: Tự động phân tích Mệnh cách, Tính cách, Tình duyên, Sự nghiệp, Tài lộc, Sức khỏe mà không cần phụ thuộc bên ngoài.
+> 5. **Giao Diện Vũ Trụ 3D & Hiệu Ứng Quét AI**: Trải nghiệm thị giác hiện đại, mượt mà trên cả máy tính và di động.
+
+---
+
+</div>
+
+<div align="center">
+
 # 紫微斗数 · 开源排盘引擎
 
 ### 算法是公开的传统智慧，不应该被锁在围墙里

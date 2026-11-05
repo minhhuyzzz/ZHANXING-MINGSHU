@@ -2,6 +2,7 @@
 import { motion } from 'framer-motion';
 import type { Palace, Star } from '@/lib/ziwei/types';
 import { STEMS, BRANCHES } from '@/lib/ziwei/constants';
+import { STAR_VI_MAP, PALACE_VI_MAP, getPalaceVi, getStarVi, getSiHuaShortVi } from '@/lib/ziwei/vietnamese';
 import clsx from 'clsx';
 
 interface PalaceCellProps {
@@ -110,7 +111,7 @@ export default function PalaceCell({
         )}
           style={!isMingGong && !isShenGong ? { color: 'var(--t-faint)' } : undefined}
         >
-          {name}
+          {getPalaceVi(name).replace(' Cung', '')} <span className="text-[8px] opacity-60 font-normal">({name.replace('宫', '')})</span>
         </span>
         {isMingGong && (
           <span className="text-[7px] text-amber-500/80 border border-amber-500/30 px-0.5 rounded leading-tight">命</span>
@@ -126,7 +127,7 @@ export default function PalaceCell({
       {/* 主星 */}
       <div className="flex flex-col gap-0.5 flex-1">
         {majorStars.length === 0 && (
-          <span className="text-[10px] italic" style={{ color: 'var(--t-faint)', opacity: 0.6 }}>空宫</span>
+          <span className="text-[10px] italic" style={{ color: 'var(--t-faint)', opacity: 0.7 }}>Vô Chính Diệu (空宫)</span>
         )}
         {majorStars.map((star) => {
           const overlaySiHua = overlayStarSiHua?.[star.name];
@@ -140,7 +141,7 @@ export default function PalaceCell({
                 'text-[13px] leading-tight font-bold tracking-tight cursor-pointer hover:brightness-125 transition-all',
                 star.brightness === 'bright' ? 'text-amber-300' : star.brightness === 'dim' ? 'text-amber-700/80' : 'text-amber-500',
               )}>
-                {star.name}
+                {getStarVi(star.name)} <span className="text-[9px] opacity-65 font-normal tracking-normal">({star.name})</span>
               </span>
               {star.siHua && <SiHuaBadge siHua={star.siHua} />}
               {overlaySiHua && (

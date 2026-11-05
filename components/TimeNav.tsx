@@ -2,6 +2,7 @@
 import { motion } from 'framer-motion';
 import { STEMS, SI_HUA_TABLE } from '@/lib/ziwei/constants';
 import type { ZiweiChart } from '@/lib/ziwei/types';
+import { getStarVi } from '@/lib/ziwei/vietnamese';
 
 export type TimeView = 'mingpan' | 'daxian' | 'liunian';
 
@@ -93,7 +94,7 @@ export default function TimeNav({
           active={view === 'daxian'}
           onClick={() => onViewChange('daxian')}
         >
-          {currentDx ? `大限 ${currentDx.startAge}–${currentDx.endAge}` : '大限'}
+          {currentDx ? `Đại Hạn (${currentDx.startAge}–${currentDx.endAge}t)` : 'Đại Hạn'}
         </TabButton>
 
         {/* 流年 — 含年份切换 */}
@@ -151,14 +152,14 @@ export default function TimeNav({
           className="flex items-center gap-2 mt-1.5 px-1 flex-wrap"
         >
           <span className="text-[9px]" style={{ color: 'var(--t-faint)' }}>
-            {view === 'daxian' ? '大限' : `${liunianYear}`}·{overlayInfo.stemName}年四化：
+            {view === 'daxian' ? 'Đại Hạn' : `Năm ${liunianYear}`} · Tứ Hóa can {overlayInfo.stemName}: 
           </span>
           {(['禄', '权', '科', '忌'] as const).map(sh => {
             const starName = Object.keys(overlayInfo.overlay).find(k => overlayInfo.overlay[k] === sh);
             if (!starName) return null;
             return (
               <span key={sh} className="text-[9px] font-medium" style={{ color: SIHUA_COLORS[sh] }}>
-                {starName}化{sh}
+                {getStarVi(starName)} Hóa {sh}
               </span>
             );
           })}

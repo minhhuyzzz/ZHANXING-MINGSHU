@@ -2,73 +2,114 @@
 import { useState } from 'react';
 import BirthForm from '@/components/BirthForm';
 import ChartBoard from '@/components/ChartBoard';
+import ChartSummary from '@/components/ChartSummary';
 import InsightPanel from '@/components/InsightPanel';
 import TimeNav, { type TimeView } from '@/components/TimeNav';
+import AiAstrolabeScanningModal from '@/components/AiAstrolabeScanningModal';
 import { generateChart } from '@/lib/ziwei/algorithm';
 import type { BirthInfo, ZiweiChart, Palace } from '@/lib/ziwei/types';
+import Link from 'next/link';
 
 /**
- * 命盘页 —— 开源版「排盘引擎 Demo」
- *
- * 这是一个最小可运行示例：用本仓库的排盘引擎 generateChart() 配合基础 UI
- * 组件，渲染一张完整紫微命盘 + 基础解读，并支持本命 / 大限 / 流年切换。
- *
- * 说明：线上商业版的完整交互界面（重设计的新 UI、AI 流式解读、合盘、分享
- * 卡片等）不在开源范围内；但排盘内核——安星算法、四化、格局识别、古籍库——
- * 完全开放（见 lib/ziwei/*），可自由二次开发出你自己的界面。
+ * Cỗ máy coi Tử Vi — Hệ thống Nghê Hải Hà (Thiên Kỷ)
  */
 export default function ChartPage() {
   const [chart, setChart] = useState<ZiweiChart | null>(null);
   const [selectedPalace, setSelectedPalace] = useState<Palace | null>(null);
   const [view, setView] = useState<TimeView>('mingpan');
   const [liunianYear, setLiunianYear] = useState(() => new Date().getFullYear());
+  const [isScanning, setIsScanning] = useState(false);
+  const [pendingInfo, setPendingInfo] = useState<BirthInfo | null>(null);
 
-  // ── 未起盘：展示出生信息表单 ──
+  // ── Chưa khởi bàn: Form nhập thông tin sinh thần ──
   if (!chart) {
     return (
-      <main style={{ maxWidth: 720, margin: '0 auto', padding: '48px 20px' }}>
-        <h1 style={{ fontSize: 28, fontWeight: 700, marginBottom: 8 }}>紫微斗数排盘</h1>
-        <p style={{ color: '#888', marginBottom: 32, fontSize: 14, lineHeight: 1.7 }}>
-          输入出生年月日时，开源排盘引擎即时生成命盘。
-          <br />
-          （本页为引擎 Demo，完整商业版界面不在开源范围；排盘内核完全开放。）
-        </p>
-        <BirthForm onSubmit={(info: BirthInfo) => setChart(generateChart(info))} />
+      <main style={{ maxWidth: 760, margin: '0 auto', padding: '40px 20px', position: 'relative', zIndex: 1 }}>
+        {isScanning && pendingInfo && (
+          <AiAstrolabeScanningModal
+            personName={pendingInfo.name}
+            onComplete={() => {
+              setChart(generateChart(pendingInfo));
+              setIsScanning(false);
+            }}
+          />
+        )}
+        <div style={{ textAlign: 'center', marginBottom: 28 }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '4px 12px', borderRadius: 999, background: 'rgba(212,168,67,0.1)', border: '1px solid rgba(212,168,67,0.25)', color: 'var(--t-gold)', fontSize: 12, marginBottom: 12 }}>
+            <span>✦</span>
+            <span>Cỗ Máy Coi Tử Vi Đẩu Số · Hệ Thống Nghê Hải Hà 《Thiên Kỷ》</span>
+          </div>
+          <h1 style={{ fontSize: 26, fontWeight: 700, marginBottom: 8, color: 'var(--t-gold)' }}>
+            Lập Lá Số & Luận Giải Tử Vi Chuyên Sâu
+          </h1>
+          <p style={{ color: 'var(--t-text2)', fontSize: 13, lineHeight: 1.7, maxWidth: 620, margin: '0 auto' }}>
+            Thuật toán an sao chuẩn xác, 14 chính tinh, tứ hóa phi tinh, nhận định cách cục tự động, hiệu chỉnh Chân Thái Dương Thời theo kinh độ 63 tỉnh thành Việt Nam.
+          </p>
+        </div>
+        <BirthForm
+          onSubmit={(info: BirthInfo) => {
+            setPendingInfo(info);
+            setIsScanning(true);
+          }}
+        />
       </main>
     );
   }
 
-  // ── 已起盘：命盘 + 解读 ──
+  // ── Đã khởi bàn: Hiển thị Mệnh bàn + Phân tích luận giải ──
   return (
-    <main style={{ maxWidth: 1280, margin: '0 auto', padding: '24px 16px' }}>
-      <button
-        type="button"
-        onClick={() => { setChart(null); setSelectedPalace(null); }}
-        style={{
-          marginBottom: 16, padding: '6px 14px', cursor: 'pointer',
-          border: '1px solid #ccc', borderRadius: 8, background: 'transparent',
-        }}
-      >
-        ← 重新起盘
-      </button>
+    <main style={{ maxWidth: 1360, margin: '0 auto', padding: '20px 16px', position: 'relative', zIndex: 1 }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+          <button
+            type="button"
+            onClick={() => { setChart(null); setSelectedPalace(null); }}
+            style={{
+              padding: '7px 16px', cursor: 'pointer',
+              border: '1px solid var(--t-border)', borderRadius: 10,
+              background: 'var(--t-card)', color: 'var(--t-text)',
+              fontSize: 12, fontWeight: 500,
+              display: 'flex', alignItems: 'center', gap: 6,
+            }}
+          >
+            <span>←</span>
+            <span>Khởi tạo lá số khác</span>
+          </button>
 
-      <TimeNav
-        chart={chart}
-        view={view}
-        liunianYear={liunianYear}
-        onViewChange={setView}
-        onYearChange={setLiunianYear}
-      />
+          <div className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-medium"
+            style={{ background: 'rgba(212,168,67,0.08)', border: '1px solid rgba(212,168,67,0.25)', color: 'var(--t-gold)' }}>
+            <span className="text-[10px] animate-pulse">✦</span>
+            <span>AI ZHANXING MINGSHU · Đã Quét 1100+ Cách Cục & Y Lý Tử Ngọ Lưu Chú</span>
+          </div>
 
-      <div
-        className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,380px)]"
-        style={{
-          gap: 20, marginTop: 16, alignItems: 'start',
-        }}
-      >
-        <ChartBoard chart={chart} onPalaceSelect={setSelectedPalace} />
-        <InsightPanel chart={chart} selectedPalace={selectedPalace} />
-      </div>
-    </main>
-  );
+          <div style={{ display: 'flex', gap: 10 }}>
+            <Link
+              href="/heming"
+              style={{
+                padding: '7px 14px', borderRadius: 10,
+                background: 'rgba(212,168,67,0.12)', border: '1px solid rgba(212,168,67,0.3)',
+                color: 'var(--t-gold)', fontSize: 12, fontWeight: 500,
+                textDecoration: 'none',
+              }}
+            >
+              Hợp Bàn (So sánh 2 lá số) →
+            </Link>
+          </div>
+        </div>
+
+        <div
+          className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,420px)]"
+          style={{
+            gap: 20, alignItems: 'start',
+          }}
+        >
+          <div className="space-y-4">
+            <ChartBoard chart={chart} onPalaceSelect={setSelectedPalace} />
+            <ChartSummary chart={chart} />
+          </div>
+          <div style={{ position: 'sticky', top: 20, height: 'calc(100vh - 40px)', minHeight: 650 }}>
+            <InsightPanel chart={chart} selectedPalace={selectedPalace} />
+          </div>
+        </div>
+      </main>
+    );
 }

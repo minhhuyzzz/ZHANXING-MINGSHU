@@ -2,6 +2,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import type { Star } from '@/lib/ziwei/types';
 import { STAR_DESCRIPTIONS } from '@/lib/ziwei/constants';
+import { getStarVi, getPalaceVi } from '@/lib/ziwei/vietnamese';
 
 interface StarDetailPanelProps {
   star: Star | null;
@@ -245,7 +246,7 @@ export default function StarDetailPanel({ star, palaceName, onClose }: StarDetai
               </div>
             )}
 
-            {/* 古书原文 */}
+            {/* ✦ Cổ Thư Toàn Thư Nguyên Văn */}
             {detail && (
               <div className="rounded-xl p-3" style={{ background: 'rgba(212,168,67,0.04)', border: '1px solid rgba(212,168,67,0.12)' }}>
                 <div className="text-[10px] tracking-widest mb-1.5 flex items-center gap-1" style={{ color: 'var(--t-gold)', opacity: 0.7 }}>
@@ -261,7 +262,7 @@ export default function StarDetailPanel({ star, palaceName, onClose }: StarDetai
                 <div>
                   <div className="text-[10px] tracking-widest mb-1.5 flex items-center gap-1.5" style={{ color: 'var(--t-faint)' }}>
                     <span className="w-3 h-px inline-block" style={{ background: 'var(--t-border-acc)' }} />
-                    倪海厦老师解读
+                    ✦ Luận Giải Thầy Nghê Hải Hà 《Thiên Kỷ》
                     <span className="w-3 h-px inline-block" style={{ background: 'var(--t-border-acc)' }} />
                   </div>
                   <p className="text-xs leading-relaxed" style={{ color: 'var(--t-text2)' }}>{detail.niHaixia}</p>
@@ -269,10 +270,10 @@ export default function StarDetailPanel({ star, palaceName, onClose }: StarDetai
 
                 <div className="grid grid-cols-1 gap-2">
                   {[
-                    { label: '事业方向', value: detail.career, icon: '◈' },
-                    { label: '感情特质', value: detail.relationship, icon: '♡' },
-                    { label: '财运分析', value: detail.wealth, icon: '◆' },
-                    { label: '健康提示', value: detail.health, icon: '☯' },
+                    { label: 'Phương hướng sự nghiệp', value: detail.career, icon: '◈' },
+                    { label: 'Đặc tính tình cảm', value: detail.relationship, icon: '♡' },
+                    { label: 'Phân tích tài lộc', value: detail.wealth, icon: '◆' },
+                    { label: 'Lưu ý sức khỏe', value: detail.health, icon: '☯' },
                   ].map(item => (
                     <div key={item.label} className="card-inner rounded-lg p-3">
                       <div className="text-[10px] mb-1 flex items-center gap-1" style={{ color: 'var(--t-faint)' }}>
@@ -286,11 +287,11 @@ export default function StarDetailPanel({ star, palaceName, onClose }: StarDetai
 
                 <div className="grid grid-cols-2 gap-2">
                   <div className="text-[10px] p-2.5 rounded-lg" style={{ border: '1px solid rgba(74,222,128,0.15)', background: 'rgba(74,222,128,0.05)' }}>
-                    <div className="text-emerald-500 mb-0.5 font-medium">最佳宫位</div>
+                    <div className="text-emerald-500 mb-0.5 font-medium">Cung vị đắc cách</div>
                     <div className="text-emerald-500/70">{detail.bestPalace}</div>
                   </div>
                   <div className="text-[10px] p-2.5 rounded-lg" style={{ border: '1px solid rgba(248,113,113,0.15)', background: 'rgba(248,113,113,0.05)' }}>
-                    <div className="text-red-500 mb-0.5 font-medium">注意宫位</div>
+                    <div className="text-red-500 mb-0.5 font-medium">Cung vị cần lưu tâm</div>
                     <div className="text-red-500/70">{detail.worstPalace}</div>
                   </div>
                 </div>

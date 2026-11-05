@@ -6,10 +6,11 @@
 import Link from 'next/link';
 import { ALL_STARS, ALL_TOPICS, getKnowledge, STAR_BRIEF_SEO, STAR_TO_SLUG } from '@/lib/seo/knowledge';
 import { TOPIC_LABEL } from '@/lib/ziwei/db-analysis';
+import { getStarVi, getPalaceVi } from '@/lib/ziwei/vietnamese';
 
 export const metadata = {
-  title: '紫微斗数知识库 · 14 主星 × 13 宫位 · 倪海厦正宗体系',
-  description: '基于倪海厦《天纪》体系与古籍《紫微斗数全集》《骨髓赋》编纂的紫微斗数知识库。覆盖 14 主星在 13 个宫位的完整论断，含一句话定调、核心论断、命盘依据、经典出处。',
+  title: 'Kho Tri Thức Tử Vi Đẩu Số · 14 Chính Tinh × 13 Cung Vị · ZHANXING MINGSHU',
+  description: 'Kho tri thức Tử Vi Đẩu Số biên soạn theo hệ thống 《Thiên Kỷ》 của Nghê Hải Hà và cổ thư 《Tử Vi Đẩu Số Toàn Tập》《Cốt Tủy Phú》. Bao quát 14 chính tinh và 13 cung vị.',
   keywords: ['紫微斗数', '倪海厦', '倪海厦紫微斗数', '紫微斗数全集', '紫微斗数全书', '14 主星', '12 宫位'],
 };
 
@@ -22,13 +23,13 @@ export default function KnowledgeHomePage() {
       <div className="px-6 py-4 flex items-center justify-between"
         style={{ borderBottom: '1px solid rgba(184,146,42,0.15)', background: 'var(--bg-page)' }}>
         <Link href="/" style={{ fontSize: '12px', color: 'var(--ac)', letterSpacing: '0.3em', textDecoration: 'none' }}>
-          ← 首页
+          ← Trang chủ
         </Link>
         <div style={{ fontSize: '12px', color: 'var(--tx-3)', letterSpacing: '0.2em' }}>
-          倪师方法论 · 知识库
+          HỆ PHÁI NGHÊ HẢI HÀ · KHO TRI THỨC
         </div>
         <Link href="/library" style={{ fontSize: '12px', color: 'var(--ac)', letterSpacing: '0.2em', textDecoration: 'none' }}>
-          古籍 →
+          Cổ Thư →
         </Link>
       </div>
 
@@ -40,18 +41,18 @@ export default function KnowledgeHomePage() {
           <div style={{ height: '1px', width: '48px', background: 'linear-gradient(to left, transparent, rgba(184,146,42,0.4))' }} />
         </div>
         <h1 style={{ fontSize: 'clamp(28px, 4vw, 42px)', fontWeight: 700, color: 'var(--tx-0)', letterSpacing: '0.15em', marginBottom: '12px' }}>
-          紫微斗数知识库
+          Kho Tri Thức Tử Vi Đẩu Số
         </h1>
         <p style={{ fontSize: '14px', color: 'var(--tx-2)', letterSpacing: '0.08em', maxWidth: '600px', margin: '0 auto', lineHeight: 1.7 }}>
-          14 主星 × 13 宫位 = <strong style={{ color: 'var(--ac)' }}>{ALL_STARS.length * ALL_TOPICS.length}</strong> 项专题<br />
-          基于倪海厦《天纪》体系编纂 · 含古籍引证
+          14 Chính Tinh × 13 Cung Vị = <strong style={{ color: 'var(--ac)' }}>{ALL_STARS.length * ALL_TOPICS.length}</strong> Chuyên đề luận đoán<br />
+          Biên soạn theo hệ thống 《Thiên Kỷ》 của Nghê Hải Hà · Trích dẫn Cổ Thư Kinh Điển
         </p>
       </div>
 
       {/* 14 主星卡片 */}
       <div className="max-w-5xl mx-auto px-6 pb-20">
         <div style={{ fontSize: '11px', color: 'var(--tx-3)', letterSpacing: '0.3em', textAlign: 'center', marginBottom: '24px' }}>
-          十四主星
+          14 CHÍNH TINH (THẬP TỨ CHÍNH TINH)
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-3">
           {ALL_STARS.map(star => (
@@ -70,7 +71,10 @@ export default function KnowledgeHomePage() {
               }}
               className="hover:shadow-md hover:border-amber-400"
             >
-              <div style={{ fontSize: '18px', fontWeight: 700, color: 'var(--tx-0)', letterSpacing: '0.15em' }}>
+              <div style={{ fontSize: '14px', fontWeight: 700, color: 'var(--tx-0)', letterSpacing: '0.05em' }}>
+                {getStarVi(star)}
+              </div>
+              <div style={{ fontSize: '11px', color: 'var(--tx-3)', marginTop: '2px' }}>
                 {star}
               </div>
             </Link>
@@ -88,7 +92,7 @@ export default function KnowledgeHomePage() {
             }}>
               <div className="flex items-baseline gap-3 mb-2">
                 <span style={{ fontSize: '20px', fontWeight: 700, color: 'var(--tx-0)', letterSpacing: '0.1em' }}>
-                  {star}星
+                  Sao {getStarVi(star)} ({star}星)
                 </span>
                 <span style={{ fontSize: '11px', color: 'var(--tx-3)', letterSpacing: '0.15em' }}>
                   ZI WEI · 14 STARS
@@ -115,7 +119,7 @@ export default function KnowledgeHomePage() {
                         textDecoration: 'none',
                       }}
                     >
-                      入{k.palaceName} · {TOPIC_LABEL[t]}
+                      Tại {getPalaceVi(k.palaceName)} · {TOPIC_LABEL[t]}
                     </Link>
                   );
                 })}

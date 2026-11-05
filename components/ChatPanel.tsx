@@ -13,12 +13,12 @@ interface ChatPanelProps {
 }
 
 const PRESET_QUESTIONS = [
-  '我的整体命格如何？性格特点是什么？',
-  '我的感情婚姻运势如何？',
-  '我的事业财运如何？适合什么方向？',
-  '我现在的大限运势如何？',
-  '我的健康需要注意什么？',
-  '今年的流年运势如何？',
+  'Tổng quan mệnh cách và ưu nhược điểm tính cách của tôi là gì?',
+  'Đường tình duyên, hôn nhân và bạn đời của tôi ra sao?',
+  'Sự nghiệp và tài lộc phù hợp định hướng kinh doanh hay chuyên môn?',
+  'Vận thế Đại Hạn hiện tại mang lại cơ hội hay trở ngại gì?',
+  'Về sức khỏe và tạng phủ kinh lạc, tôi cần lưu ý bộ phận nào?',
+  'Vận hạn Lưu Niên năm nay diễn biến cát hung thế nào?',
 ];
 
 export default function ChatPanel({ chart }: ChatPanelProps) {
@@ -48,8 +48,8 @@ export default function ChatPanel({ chart }: ChatPanelProps) {
       });
 
       if (res.status === 404) throw new Error('api-missing');
-      if (!res.ok) throw new Error('请求失败');
-      if (!res.body) throw new Error('无响应流');
+      if (!res.ok) throw new Error('Yêu cầu thất bại');
+      if (!res.body) throw new Error('Không có luồng phản hồi');
 
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
@@ -83,7 +83,7 @@ export default function ChatPanel({ chart }: ChatPanelProps) {
       const missing = e instanceof Error && e.message === 'api-missing';
       setMessages(prev => [...prev, {
         role: 'assistant',
-        content: missing ? '开源版不含 AI 解读接口（/api/interpret），需要你自己实现后才能用，详见 README「快速开始」。排盘本身不需要任何 API Key。' : '解读失败，请检查API配置或稍后重试。',
+        content: missing ? 'Không thể kết nối máy chủ luận giải /api/interpret. Vui lòng kiểm tra lại dịch vụ.' : 'Luận giải gặp lỗi, vui lòng thử lại sau giây lát.',
       }]);
     } finally {
       setLoading(false);
@@ -94,8 +94,8 @@ export default function ChatPanel({ chart }: ChatPanelProps) {
     <div className="flex flex-col h-full rounded-xl overflow-hidden card-glass">
       {/* 标题 */}
       <div className="px-4 py-3 flex-shrink-0" style={{ borderBottom: '1px solid var(--t-border)' }}>
-        <h3 className="text-xs font-medium tracking-widest" style={{ color: 'var(--t-gold)' }}>AI 命盘解读</h3>
-        <p className="text-[10px] mt-0.5" style={{ color: 'var(--t-faint)' }}>倪海厦正宗紫微斗数 · 智慧解析</p>
+        <h3 className="text-xs font-medium tracking-widest" style={{ color: 'var(--t-gold)' }}>AI LUẬN GIẢI · ZHANXING MINGSHU</h3>
+        <p className="text-[10px] mt-0.5" style={{ color: 'var(--t-faint)' }}>Hệ Phái Nghê Hải Hà 《Thiên Kỷ》 · Trí Tuệ Soi Chiếu</p>
       </div>
 
       {/* 消息列表 */}
@@ -104,8 +104,8 @@ export default function ChatPanel({ chart }: ChatPanelProps) {
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-8">
             <div className="text-4xl mb-3" style={{ color: 'var(--t-gold)', opacity: 0.15 }}>✦</div>
             <p className="text-xs leading-relaxed" style={{ color: 'var(--t-faint)' }}>
-              命盘已生成，可直接提问<br />
-              或从下方选择常见问题开始解读
+              Lá số đã sẵn sàng, bạn có thể đặt câu hỏi tự do<br />
+              hoặc chọn câu hỏi tiêu biểu bên dưới để khám phá
             </p>
           </motion.div>
         )}
@@ -131,7 +131,7 @@ export default function ChatPanel({ chart }: ChatPanelProps) {
                 }}
               >
                 {msg.role === 'assistant' && (
-                  <div className="text-[10px] mb-1" style={{ color: 'var(--t-faint)' }}>命理师 ·</div>
+                  <div className="text-[10px] mb-1" style={{ color: 'var(--t-faint)' }}>Chiêm Tinh Sư ·</div>
                 )}
                 <div className="whitespace-pre-wrap text-xs leading-relaxed">
                   {msg.content}
@@ -184,7 +184,7 @@ export default function ChatPanel({ chart }: ChatPanelProps) {
             value={input}
             onChange={e => setInput(e.target.value)}
             onKeyDown={e => e.key === 'Enter' && !e.shiftKey && sendMessage(input)}
-            placeholder="输入问题，如：我的感情运势如何？"
+            placeholder="Đặt câu hỏi, ví dụ: Đường sự nghiệp của tôi trong 3 năm tới thế nào?..."
             disabled={loading}
             className="flex-1 rounded-lg px-3 py-2 text-xs focus:outline-none transition-colors"
             style={{
@@ -203,7 +203,7 @@ export default function ChatPanel({ chart }: ChatPanelProps) {
               color: 'var(--t-gold)',
             }}
           >
-            解读
+            Luận giải
           </button>
         </div>
       </div>

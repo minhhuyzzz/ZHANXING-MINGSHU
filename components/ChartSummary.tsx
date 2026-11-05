@@ -3,6 +3,17 @@ import { motion } from 'framer-motion';
 import type { ZiweiChart } from '@/lib/ziwei/types';
 import { BRANCHES, STEMS } from '@/lib/ziwei/constants';
 import { detectPatterns, getMingGongSummary } from '@/lib/ziwei/patterns';
+import {
+  STAR_VI_MAP,
+  PALACE_VI_MAP,
+  WUXINGJU_VI_MAP,
+  SIHUA_VI_MAP,
+  getPatternVi,
+  getPatternDescVi,
+  getPatternConditionVi,
+  getPatternSourceVi,
+  getPalaceVi,
+} from '@/lib/ziwei/vietnamese';
 
 interface ChartSummaryProps {
   chart: ZiweiChart;
@@ -38,7 +49,7 @@ export default function ChartSummary({ chart }: ChartSummaryProps) {
       transition={{ delay: 0.3, duration: 0.5 }}
       className="space-y-4"
     >
-      {/* ── 命格总览 ── */}
+      {/* ── ✦ Tổng Quan Mệnh Cách (Tổng Quan Mệnh Cách (命格总览)) ── */}
       <motion.div
         initial={{ opacity: 0, y: 18 }}
         animate={{ opacity: 1, y: 0 }}
@@ -47,19 +58,21 @@ export default function ChartSummary({ chart }: ChartSummaryProps) {
       <div className="card-glass rounded-xl p-5">
         <div className="text-[10px] tracking-widest mb-4 flex items-center gap-2" style={{ color: 'var(--t-faint)' }}>
           <span style={{ color: 'var(--t-gold)', opacity: 0.6 }}>✦</span>
-          命格总览
+          Tổng Quan Mệnh Cách (命格总览)
         </div>
 
         <div className="flex flex-wrap items-start gap-4">
           <div>
-            <div className="text-[9px] mb-1.5" style={{ color: 'var(--t-faint)', opacity: 0.85 }}>命宫主星</div>
+            <div className="text-[9px] mb-1.5" style={{ color: 'var(--t-faint)', opacity: 0.85 }}>Chính tinh Cung Mệnh</div>
             <div className="flex items-center gap-1">
               {mingStars.length > 0 ? (
                 mingStars.map(s => (
-                  <span key={s} className="font-bold text-lg" style={{ color: 'var(--t-gold)' }}>{s}</span>
+                  <span key={s} className="font-bold text-lg" style={{ color: 'var(--t-gold)' }}>
+    {STAR_VI_MAP[s] || s} <span className="text-xs font-normal opacity-60">({s})</span>
+  </span>
                 ))
               ) : (
-                <span className="text-sm" style={{ color: 'var(--t-faint)' }}>空宫</span>
+                <span className="text-sm font-medium" style={{ color: 'var(--t-faint)' }}>Vô Chính Diệu (空宫)</span>
               )}
             </div>
             {nature && (
@@ -69,7 +82,7 @@ export default function ChartSummary({ chart }: ChartSummaryProps) {
 
           {keywords.length > 0 && (
             <div>
-              <div className="text-[9px] mb-1.5" style={{ color: 'var(--t-faint)', opacity: 0.85 }}>性格特质</div>
+              <div className="text-[9px] mb-1.5" style={{ color: 'var(--t-faint)', opacity: 0.85 }}>Đặc chất tính cách</div>
               <div className="flex flex-wrap gap-1.5">
                 {keywords.map(k => (
                   <span key={k} className="text-[10px] px-2 py-0.5 rounded-full"
@@ -86,11 +99,11 @@ export default function ChartSummary({ chart }: ChartSummaryProps) {
           )}
 
           <div className="ml-auto text-right">
-            <div className="text-[9px] mb-1" style={{ color: 'var(--t-faint)', opacity: 0.85 }}>五行局 · 当前大限</div>
-            <div className="text-[11px]" style={{ color: 'var(--t-text2)' }}>{chart.wuxingJuName}</div>
+            <div className="text-[9px] mb-1" style={{ color: 'var(--t-faint)', opacity: 0.85 }}>Cục · Đại Hạn hiện tại</div>
+            <div className="text-[11px]" style={{ color: 'var(--t-text2)' }}>{WUXINGJU_VI_MAP[chart.wuxingJuName] || chart.wuxingJuName}</div>
             {currentDx && (
               <div className="text-[11px] text-purple-500 mt-0.5">
-                {currentDx.startAge}~{currentDx.endAge}岁 · {currentDx.palaceName}
+                {currentDx.startAge}~{currentDx.endAge} tuổi · {getPalaceVi(currentDx.palaceName)}
               </div>
             )}
           </div>
@@ -98,13 +111,13 @@ export default function ChartSummary({ chart }: ChartSummaryProps) {
 
         <div className="mt-4 pt-3 flex flex-wrap gap-x-4 gap-y-1 text-[10px]"
           style={{ borderTop: '1px solid var(--t-border)', color: 'var(--t-faint)' }}>
-          <span>公历 {chart.birthInfo.year}-{chart.birthInfo.month}-{chart.birthInfo.day}</span>
+          <span>Dương lịch: {chart.birthInfo.year}-{chart.birthInfo.month}-{chart.birthInfo.day}</span>
           <span>
-            农历 {chart.lunarInfo.lunarYear}年{chart.lunarInfo.isLeapMonth ? '闰' : ''}
-            {chart.lunarInfo.lunarMonth}月{chart.lunarInfo.lunarDay}日
+            Âm lịch: Năm {chart.lunarInfo.lunarYear} {chart.lunarInfo.isLeapMonth ? 'Nhuận ' : ''}
+            Tháng {chart.lunarInfo.lunarMonth} Ngày {chart.lunarInfo.lunarDay}
           </span>
-          <span>{STEMS[chart.lunarInfo.yearStem]}{BRANCHES[chart.lunarInfo.yearBranch]}年 · {BRANCHES[chart.birthInfo.hour]}时</span>
-          <span>命宫{BRANCHES[chart.mingGongBranch]} · 身宫{BRANCHES[chart.shenGongBranch]}</span>
+          <span>Năm Can Chi: {STEMS[chart.lunarInfo.yearStem]}{BRANCHES[chart.lunarInfo.yearBranch]} · Giờ {BRANCHES[chart.birthInfo.hour]}</span>
+          <span>Mệnh Cung tại {BRANCHES[chart.mingGongBranch]} · Thân Cung tại {BRANCHES[chart.shenGongBranch]}</span>
         </div>
       </div>
       </motion.div>
@@ -119,7 +132,7 @@ export default function ChartSummary({ chart }: ChartSummaryProps) {
         <div className="card-glass rounded-xl p-4">
           <div className="text-[10px] tracking-widest mb-3 flex items-center gap-2" style={{ color: 'var(--t-faint)' }}>
             <span style={{ color: 'var(--t-gold)', opacity: 0.6 }}>◆</span>
-            本命四化
+            Bản Mệnh Tứ Hóa (本命四化)
           </div>
           <div className="grid grid-cols-2 gap-2">
             {siHuaSummary.map(({ name, siHua, palaceName }) => {
@@ -135,10 +148,10 @@ export default function ChartSummary({ chart }: ChartSummaryProps) {
                   className="flex items-center justify-between px-3 py-2 rounded-lg text-[10px]"
                   style={{ background: c.bg, border: `1px solid ${c.border}`, color: c.text }}
                 >
-                  <span className="font-medium">{name}</span>
+                  <span className="font-semibold">{STAR_VI_MAP[name] || name} <span className="opacity-60 font-normal">({name})</span></span>
                   <div className="flex items-center gap-1.5 text-right">
-                    <span style={{ opacity: 0.6 }} className="text-[9px]">{palaceName.replace('宫', '')}</span>
-                    <span className="font-bold">化{siHua}</span>
+                    <span style={{ opacity: 0.7 }} className="text-[9px]">{getPalaceVi(palaceName).replace(' Cung', '')}</span>
+                    <span className="font-bold">Hóa {SIHUA_VI_MAP[siHua] || siHua} <span className="text-[8px] opacity-60 font-normal">(化{siHua})</span></span>
                   </div>
                 </div>
               );
@@ -148,7 +161,7 @@ export default function ChartSummary({ chart }: ChartSummaryProps) {
         </motion.div>
       )}
 
-      {/* ── 格局识别 ── */}
+      {/* ── ✦ Nhận Diện Cách Cục (格局识别) ── */}
       {patterns.length > 0 && (
         <motion.div
           initial={{ opacity: 0, y: 18 }}
@@ -158,8 +171,8 @@ export default function ChartSummary({ chart }: ChartSummaryProps) {
         <div className="card-glass rounded-xl p-4">
           <div className="text-[10px] tracking-widest mb-3 flex items-center gap-2" style={{ color: 'var(--t-faint)' }}>
             <span style={{ color: 'var(--t-gold)', opacity: 0.6 }}>◉</span>
-            格局识别
-            <span className="text-[9px] ml-auto" style={{ color: 'var(--t-faint)', opacity: 0.75 }}>{patterns.length}个格局</span>
+            Nhận Diện Cách Cục (格局识别)
+            <span className="text-[9px] ml-auto" style={{ color: 'var(--t-faint)', opacity: 0.75 }}>{patterns.length} cách cục</span>
           </div>
           <div className="space-y-2">
             {patterns.map((p, i) => {
@@ -174,40 +187,40 @@ export default function ChartSummary({ chart }: ChartSummaryProps) {
                 >
                   <div className="flex items-center gap-2 mb-1.5">
                     <div className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${st.dot}`} />
-                    <span className={`text-[11px] font-medium ${st.label}`}>{p.name}</span>
+                    <span className={`text-[11px] font-semibold ${st.label}`}>{getPatternVi(p.name)}</span>
                     <div className="flex gap-1 ml-auto">
                       {p.palaces.slice(0, 2).map(pa => (
                         <span key={pa} className={`text-[8px] px-1.5 py-px rounded-full border ${st.badge}`}>
-                          {pa.replace('宫', '')}
+                          {getPalaceVi(pa).replace(' Cung', '')}
                         </span>
                       ))}
                     </div>
                   </div>
                   <p className="text-[10px] leading-relaxed pl-3.5" style={{ color: 'var(--t-text2)' }}>
-                    {p.description}
+                    {getPatternDescVi(p.name, p.description)}
                   </p>
 
                   {p.conditions && (
                     <div className="mt-2 pl-3.5 space-y-0.5">
                       {p.conditions.required.length > 0 && (
                         <div className="text-[9px] leading-relaxed" style={{ color: 'var(--t-text2)', opacity: 0.85 }}>
-                          <span className="font-medium" style={{ color: 'var(--t-gold)' }}>必须</span>
+                          <span className="font-semibold" style={{ color: 'var(--t-gold)' }}>Bắt buộc (必须)</span>
                           <span style={{ opacity: 0.6 }}> · </span>
-                          {p.conditions.required.join('、')}
+                          {p.conditions.required.map(getPatternConditionVi).join('、')}
                         </div>
                       )}
                       {p.conditions.bonus && p.conditions.bonus.length > 0 && (
                         <div className="text-[9px] leading-relaxed" style={{ color: 'var(--t-text2)', opacity: 0.85 }}>
-                          <span className="font-medium text-emerald-500">加分</span>
+                          <span className="font-semibold text-emerald-400">Cát hóa (加分)</span>
                           <span style={{ opacity: 0.6 }}> · </span>
-                          {p.conditions.bonus.join('、')}
+                          {p.conditions.bonus.map(getPatternConditionVi).join('、')}
                         </div>
                       )}
                       {p.conditions.breaking && p.conditions.breaking.length > 0 && (
                         <div className="text-[9px] leading-relaxed" style={{ color: 'var(--t-text2)', opacity: 0.85 }}>
-                          <span className="font-medium text-orange-500">破格</span>
+                          <span className="font-semibold text-orange-400">Phá cách (破格)</span>
                           <span style={{ opacity: 0.6 }}> · </span>
-                          {p.conditions.breaking.join('、')}
+                          {p.conditions.breaking.map(getPatternConditionVi).join('、')}
                         </div>
                       )}
                     </div>
@@ -215,7 +228,7 @@ export default function ChartSummary({ chart }: ChartSummaryProps) {
 
                   {p.source && (
                     <div className="text-[9px] mt-1.5 pl-3.5" style={{ color: 'var(--t-faint)', opacity: 0.5 }}>
-                      出处 · {p.source}
+                      Xuất xứ · {getPatternSourceVi(p.source)}
                     </div>
                   )}
                 </motion.div>
@@ -235,7 +248,7 @@ export default function ChartSummary({ chart }: ChartSummaryProps) {
       <div className="card-glass rounded-xl p-4">
         <div className="text-[10px] tracking-widest mb-3 flex items-center gap-2" style={{ color: 'var(--t-faint)' }}>
           <span className="text-purple-500/60">◎</span>
-          大限运程
+          Đại Hạn Vận Trình (大限运程)
         </div>
         <div className="grid grid-cols-3 gap-2">
           {chart.daXians.slice(0, 9).map((dx, i) => {
@@ -252,8 +265,8 @@ export default function ChartSummary({ chart }: ChartSummaryProps) {
                   color: isCurrent ? '#a78bfa' : 'var(--t-faint)',
                 }}
               >
-                <div className="font-mono tabular-nums">{dx.startAge}~{dx.endAge}</div>
-                <div className="text-[9px] mt-0.5" style={{ opacity: 0.7 }}>{dx.palaceName.replace('宫', '')}</div>
+                <div className="font-mono tabular-nums">{dx.startAge}~{dx.endAge} tuổi</div>
+                <div className="text-[9px] mt-0.5" style={{ opacity: 0.85 }}>{getPalaceVi(dx.palaceName).replace(' Cung', '')}</div>
               </div>
             );
           })}

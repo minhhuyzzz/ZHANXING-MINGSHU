@@ -9,8 +9,8 @@ import { ALL_BOOKS, TOTAL_PARAGRAPHS } from '@/lib/classics';
 import LibrarySearch from './LibrarySearch';
 
 export const metadata = {
-  title: '倪师方法论 · 古籍原典库 · 紫微斗数全集 / 全书 / 骨髓赋',
-  description: '紫微斗数权威古籍全文检索：《紫微斗数全集》《紫微斗数全书》《骨髓赋》倪海厦《天纪》引证来源',
+  title: 'Kho Cổ Thư Tử Vi Đẩu Số Toàn Tập · Toàn Thư · Cốt Tủy Phú · ZHANXING MINGSHU',
+  description: 'Tra cứu toàn văn cổ thư Tử Vi Đẩu Số kinh điển: Tử Vi Đẩu Số Toàn Tập, Toàn Thư, Cốt Tủy Phú - Cội nguồn dẫn chứng trong Thiên Kỷ của Nghê Hải Hà.',
 };
 
 export default function LibraryHomePage() {
@@ -20,13 +20,13 @@ export default function LibraryHomePage() {
       <div className="px-6 py-4 flex items-center justify-between"
         style={{ borderBottom: '1px solid rgba(184,146,42,0.15)', background: 'var(--bg-page)' }}>
         <Link href="/" style={{ fontSize: '12px', color: 'var(--ac)', letterSpacing: '0.3em', textDecoration: 'none' }}>
-          ← 返回首页
+          ← Trang chủ
         </Link>
         <div style={{ fontSize: '12px', color: 'var(--tx-3)', letterSpacing: '0.3em' }}>
-          古籍原典库 · CLASSICS
+          KHO NGUYÊN ĐIỂN CỔ THƯ · CLASSICS
         </div>
         <Link href="/chart" style={{ fontSize: '12px', color: 'var(--ac)', letterSpacing: '0.2em', textDecoration: 'none' }}>
-          起盘 →
+          Lập lá số →
         </Link>
       </div>
 
@@ -38,11 +38,11 @@ export default function LibraryHomePage() {
           <div style={{ height: '1px', width: '48px', background: 'linear-gradient(to left, transparent, rgba(184,146,42,0.4))' }} />
         </div>
         <h1 style={{ fontSize: 'clamp(28px, 4vw, 42px)', fontWeight: 700, color: 'var(--tx-0)', letterSpacing: '0.15em', marginBottom: '12px' }}>
-          倪师方法论 · 古籍原典库
+          Kho Nguyên Điển Cổ Thư Tử Vi
         </h1>
         <p style={{ fontSize: '14px', color: 'var(--tx-2)', letterSpacing: '0.1em', maxWidth: '600px', margin: '0 auto', lineHeight: 1.7 }}>
-          紫微斗数权威古籍全文检索<br />
-          收录 <strong style={{ color: 'var(--ac)' }}>{ALL_BOOKS.length}</strong> 部古籍 · 共 <strong style={{ color: 'var(--ac)' }}>{TOTAL_PARAGRAPHS}</strong> 段精华
+          Tra cứu toàn văn các trước tác Tử Vi Đẩu Số uy tín nhất<br />
+          Tuyển tập <strong style={{ color: 'var(--ac)' }}>{ALL_BOOKS.length}</strong> bộ kinh điển · Hơn <strong style={{ color: 'var(--ac)' }}>{TOTAL_PARAGRAPHS}</strong> đoạn luận quyết cốt tủy
         </p>
       </div>
 
@@ -80,9 +80,9 @@ export default function LibraryHomePage() {
                 {book.intro}
               </div>
               <div style={{ display: 'flex', gap: '12px', fontSize: '11px', color: 'var(--tx-3)' }}>
-                <span>{book.chapters.length} 章节</span>
+                <span>{book.chapters.length} Chương</span>
                 <span style={{ color: 'rgba(184,146,42,0.4)' }}>·</span>
-                <span>{book.chapters.reduce((s, c) => s + c.paragraphs.length, 0)} 段精华</span>
+                <span>{book.chapters.reduce((s, c) => s + c.paragraphs.length, 0)} Đoạn trích</span>
               </div>
               <div style={{
                 display: 'inline-flex',
@@ -92,7 +92,7 @@ export default function LibraryHomePage() {
                 letterSpacing: '0.15em',
                 fontWeight: 500,
               }}>
-                进入查阅 →
+                Vào tra cứu →
               </div>
             </Link>
           ))}

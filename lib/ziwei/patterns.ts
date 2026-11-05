@@ -15,7 +15,7 @@
  *  - 倪师《天纪》紫微斗数讲义
  */
 
-import 'server-only';
+// patterns.ts is isomorphic
 import type { ZiweiChart, Palace, Star, SiHua } from './types';
 
 // ────────────────── 类型 ──────────────────
