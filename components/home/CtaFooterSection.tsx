@@ -40,29 +40,6 @@ export default function CtaFooterSection({ colors: c, theme }: CtaFooterSectionP
         <div>
           © 2026 <strong>ZHANXING MINGSHU (占星明舒)</strong> — Nền Tảng Chiêm Tinh &amp; Tử Vi Đẩu Số Chuyên Sâu
         </div>
-        <div className="text-[11px] leading-relaxed p-4 rounded-xl border text-left"
-          style={{ background: 'rgba(212,168,67,0.04)', borderColor: 'rgba(212,168,67,0.2)', color: c.textSecond }}>
-          <div className="font-semibold mb-1 flex items-center gap-2" style={{ color: c.goldSolid }}>
-            <span>✦</span>
-            <span>Kế Thừa &amp; Ghi Nhận Nguồn Mở (Open Source Attribution):</span>
-          </div>
-          <p className="mb-2">
-            Hệ thống an sao và tri thức cốt lõi được kế thừa &amp; mở rộng từ dự án nguồn mở{' '}
-            <a
-              href="https://github.com/Renhuai123/ziwei-doushu"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="underline font-mono text-[11px] hover:text-amber-400 transition-colors"
-              style={{ color: c.goldSolid }}
-            >
-              Renhuai123/ziwei-doushu
-            </a>
-            : <em>紫微斗数开源排盘引擎 — 基于倪海厦《天纪》体系，含完整排盘算法、四化系统、格局知识库、古籍原文数据</em>.
-          </p>
-          <p className="text-[10px]" style={{ color: c.textMuted }}>
-            <strong>ZHANXING MINGSHU</strong> đã chuẩn hóa 100% bản địa hóa Tiếng Việt (chú giải chữ Hán kèm theo), tích hợp y đạo kinh lạc tạng phủ Nghê Hải Hà, hệ thống phân tích đa chiều thông tuệ bằng AI và giao diện Tinh Bàn 3D vũ trụ tối tân.
-          </p>
-        </div>
       </div>
     </section>
   );
