@@ -73,7 +73,7 @@ export default function ChartBoard({ chart, onStarSelect, onPalaceSelect, onSiHu
     }
     return {};
   })();
-  const overlayLabel = timeView === 'daxian' ? '限' : timeView === 'liunian' ? '年' : undefined;
+  const overlayLabel = timeView === 'daxian' ? 'Hạn' : timeView === 'liunian' ? 'Năm' : undefined;
 
   const handlePalaceClick = (branch: number) => {
     const isDeselecting = selectedBranch === branch;
@@ -261,7 +261,7 @@ export default function ChartBoard({ chart, onStarSelect, onPalaceSelect, onSiHu
         </AnimatePresence>
       </div>
 
-      {/* 图例 */}
+      {/* Chú thích Tứ Hóa & Hướng Dẫn */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -269,15 +269,17 @@ export default function ChartBoard({ chart, onStarSelect, onPalaceSelect, onSiHu
         className="mt-3 flex items-center justify-center gap-2 text-[9px] flex-wrap"
       >
         {[
-          { h: '化禄', c: 'text-emerald-500 border-emerald-500/30' },
-          { h: '化权', c: 'text-blue-500 border-blue-500/30' },
-          { h: '化科', c: 'text-yellow-500 border-yellow-500/30' },
-          { h: '化忌', c: 'text-red-500 border-red-500/30' },
-        ].map(({ h, c }) => (
-          <span key={h} className={`border px-1.5 py-0.5 rounded-full font-medium ${c}`}>{h}</span>
+          { h: 'Hóa Lộc', cn: '禄', c: 'text-emerald-500 border-emerald-500/30' },
+          { h: 'Hóa Quyền', cn: '权', c: 'text-blue-500 border-blue-500/30' },
+          { h: 'Hóa Khoa', cn: '科', c: 'text-yellow-500 border-yellow-500/30' },
+          { h: 'Hóa Kỵ', cn: '忌', c: 'text-red-500 border-red-500/30' },
+        ].map(({ h, cn, c }) => (
+          <span key={h} className={`border px-1.5 py-0.5 rounded-full font-medium ${c}`}>
+            {h} <span className="opacity-60 text-[8px]">({cn})</span>
+          </span>
         ))}
-        <span className="px-1.5 py-0.5 rounded-full" style={{ color: 'var(--t-faint)', border: '1px solid var(--t-border)' }}>
-          点击宫位看三方四正
+        <span className="px-2 py-0.5 rounded-full" style={{ color: 'var(--t-faint)', border: '1px solid var(--t-border)' }}>
+          ✦ Bấm vào cung vị để xem Tam Phương Tứ Chính
         </span>
       </motion.div>
     </div>

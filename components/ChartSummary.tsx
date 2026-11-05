@@ -8,6 +8,8 @@ import {
   PALACE_VI_MAP,
   WUXINGJU_VI_MAP,
   SIHUA_VI_MAP,
+  STEM_VI_MAP,
+  BRANCH_VI_MAP,
   getPatternVi,
   getPatternDescVi,
   getPatternConditionVi,
@@ -49,7 +51,7 @@ export default function ChartSummary({ chart }: ChartSummaryProps) {
       transition={{ delay: 0.3, duration: 0.5 }}
       className="space-y-4"
     >
-      {/* ── ✦ Tổng Quan Mệnh Cách (Tổng Quan Mệnh Cách (命格总览)) ── */}
+      {/* ── ✦ Tổng Quan Mệnh Cách (Tổng Quan Mệnh Cách) ── */}
       <motion.div
         initial={{ opacity: 0, y: 18 }}
         animate={{ opacity: 1, y: 0 }}
@@ -72,7 +74,7 @@ export default function ChartSummary({ chart }: ChartSummaryProps) {
   </span>
                 ))
               ) : (
-                <span className="text-sm font-medium" style={{ color: 'var(--t-faint)' }}>Vô Chính Diệu (空宫)</span>
+                <span className="text-sm font-medium" style={{ color: 'var(--t-faint)' }}>Vô Chính Diệu</span>
               )}
             </div>
             {nature && (
@@ -116,8 +118,8 @@ export default function ChartSummary({ chart }: ChartSummaryProps) {
             Âm lịch: Năm {chart.lunarInfo.lunarYear} {chart.lunarInfo.isLeapMonth ? 'Nhuận ' : ''}
             Tháng {chart.lunarInfo.lunarMonth} Ngày {chart.lunarInfo.lunarDay}
           </span>
-          <span>Năm Can Chi: {STEMS[chart.lunarInfo.yearStem]}{BRANCHES[chart.lunarInfo.yearBranch]} · Giờ {BRANCHES[chart.birthInfo.hour]}</span>
-          <span>Mệnh Cung tại {BRANCHES[chart.mingGongBranch]} · Thân Cung tại {BRANCHES[chart.shenGongBranch]}</span>
+          <span>Năm Can Chi: {STEM_VI_MAP[STEMS[chart.lunarInfo.yearStem]] || STEMS[chart.lunarInfo.yearStem]} {BRANCH_VI_MAP[BRANCHES[chart.lunarInfo.yearBranch]] || BRANCHES[chart.lunarInfo.yearBranch]} ({STEMS[chart.lunarInfo.yearStem]}{BRANCHES[chart.lunarInfo.yearBranch]}) · Giờ {BRANCH_VI_MAP[BRANCHES[chart.birthInfo.hour]] || BRANCHES[chart.birthInfo.hour]} ({BRANCHES[chart.birthInfo.hour]})</span>
+          <span>Mệnh Cung tại {BRANCH_VI_MAP[BRANCHES[chart.mingGongBranch]] || BRANCHES[chart.mingGongBranch]} ({BRANCHES[chart.mingGongBranch]}) · Thân Cung tại {BRANCH_VI_MAP[BRANCHES[chart.shenGongBranch]] || BRANCHES[chart.shenGongBranch]} ({BRANCHES[chart.shenGongBranch]})</span>
         </div>
       </div>
       </motion.div>
@@ -132,7 +134,7 @@ export default function ChartSummary({ chart }: ChartSummaryProps) {
         <div className="card-glass rounded-xl p-4">
           <div className="text-[10px] tracking-widest mb-3 flex items-center gap-2" style={{ color: 'var(--t-faint)' }}>
             <span style={{ color: 'var(--t-gold)', opacity: 0.6 }}>◆</span>
-            Bản Mệnh Tứ Hóa (本命四化)
+            Bản Mệnh Tứ Hóa
           </div>
           <div className="grid grid-cols-2 gap-2">
             {siHuaSummary.map(({ name, siHua, palaceName }) => {
@@ -161,7 +163,7 @@ export default function ChartSummary({ chart }: ChartSummaryProps) {
         </motion.div>
       )}
 
-      {/* ── ✦ Nhận Diện Cách Cục (格局识别) ── */}
+      {/* ── ✦ Nhận Diện Cách Cục ── */}
       {patterns.length > 0 && (
         <motion.div
           initial={{ opacity: 0, y: 18 }}
@@ -204,23 +206,23 @@ export default function ChartSummary({ chart }: ChartSummaryProps) {
                     <div className="mt-2 pl-3.5 space-y-0.5">
                       {p.conditions.required.length > 0 && (
                         <div className="text-[9px] leading-relaxed" style={{ color: 'var(--t-text2)', opacity: 0.85 }}>
-                          <span className="font-semibold" style={{ color: 'var(--t-gold)' }}>Bắt buộc (必须)</span>
+                          <span className="font-semibold" style={{ color: 'var(--t-gold)' }}>Bắt buộc</span>
                           <span style={{ opacity: 0.6 }}> · </span>
-                          {p.conditions.required.map(getPatternConditionVi).join('、')}
+                          {p.conditions.required.map(getPatternConditionVi).join(', ')}
                         </div>
                       )}
                       {p.conditions.bonus && p.conditions.bonus.length > 0 && (
                         <div className="text-[9px] leading-relaxed" style={{ color: 'var(--t-text2)', opacity: 0.85 }}>
-                          <span className="font-semibold text-emerald-400">Cát hóa (加分)</span>
+                          <span className="font-semibold text-emerald-400">Cát hóa</span>
                           <span style={{ opacity: 0.6 }}> · </span>
-                          {p.conditions.bonus.map(getPatternConditionVi).join('、')}
+                          {p.conditions.bonus.map(getPatternConditionVi).join(', ')}
                         </div>
                       )}
                       {p.conditions.breaking && p.conditions.breaking.length > 0 && (
                         <div className="text-[9px] leading-relaxed" style={{ color: 'var(--t-text2)', opacity: 0.85 }}>
-                          <span className="font-semibold text-orange-400">Phá cách (破格)</span>
+                          <span className="font-semibold text-orange-400">Phá cách</span>
                           <span style={{ opacity: 0.6 }}> · </span>
-                          {p.conditions.breaking.map(getPatternConditionVi).join('、')}
+                          {p.conditions.breaking.map(getPatternConditionVi).join(', ')}
                         </div>
                       )}
                     </div>
@@ -248,7 +250,7 @@ export default function ChartSummary({ chart }: ChartSummaryProps) {
       <div className="card-glass rounded-xl p-4">
         <div className="text-[10px] tracking-widest mb-3 flex items-center gap-2" style={{ color: 'var(--t-faint)' }}>
           <span className="text-purple-500/60">◎</span>
-          Đại Hạn Vận Trình (大限运程)
+          Đại Hạn Vận Trình
         </div>
         <div className="grid grid-cols-3 gap-2">
           {chart.daXians.slice(0, 9).map((dx, i) => {

@@ -2,7 +2,7 @@
 import { motion } from 'framer-motion';
 import { STEMS, SI_HUA_TABLE } from '@/lib/ziwei/constants';
 import type { ZiweiChart } from '@/lib/ziwei/types';
-import { getStarVi } from '@/lib/ziwei/vietnamese';
+import { getStarVi, getSiHuaShortVi, STEM_VI_MAP } from '@/lib/ziwei/vietnamese';
 
 export type TimeView = 'mingpan' | 'daxian' | 'liunian';
 
@@ -81,15 +81,15 @@ export default function TimeNav({
         className="flex items-center rounded-xl p-1 gap-1"
         style={{ background: 'var(--t-surface)', border: '1px solid var(--t-border)' }}
       >
-        {/* 本命 */}
+        {/* Bản Mệnh */}
         <TabButton
           active={view === 'mingpan'}
           onClick={() => onViewChange('mingpan')}
         >
-          本命
+          Bản Mệnh
         </TabButton>
 
-        {/* 大限 */}
+        {/* Đại Hạn */}
         <TabButton
           active={view === 'daxian'}
           onClick={() => onViewChange('daxian')}
@@ -97,7 +97,7 @@ export default function TimeNav({
           {currentDx ? `Đại Hạn (${currentDx.startAge}–${currentDx.endAge}t)` : 'Đại Hạn'}
         </TabButton>
 
-        {/* 流年 — 含年份切换 */}
+        {/* Lưu Niên — 含年份切换 */}
         <div
           className="relative flex-1 flex items-center justify-center rounded-lg py-1.5 gap-1 transition-all duration-200"
           style={{
@@ -114,7 +114,7 @@ export default function TimeNav({
             className="text-[10px] font-medium flex-1 text-center"
             style={{ color: view === 'liunian' ? 'var(--t-gold)' : 'var(--t-faint)' }}
           >
-            流年
+            Lưu Niên
           </button>
           {/* 年份 +/- */}
           <div className="flex items-center gap-0.5">
@@ -152,14 +152,14 @@ export default function TimeNav({
           className="flex items-center gap-2 mt-1.5 px-1 flex-wrap"
         >
           <span className="text-[9px]" style={{ color: 'var(--t-faint)' }}>
-            {view === 'daxian' ? 'Đại Hạn' : `Năm ${liunianYear}`} · Tứ Hóa can {overlayInfo.stemName}: 
+            {view === 'daxian' ? 'Đại Hạn' : `Năm ${liunianYear}`} · Tứ Hóa can {STEM_VI_MAP[overlayInfo.stemName] || overlayInfo.stemName} ({overlayInfo.stemName}): 
           </span>
           {(['禄', '权', '科', '忌'] as const).map(sh => {
             const starName = Object.keys(overlayInfo.overlay).find(k => overlayInfo.overlay[k] === sh);
             if (!starName) return null;
             return (
               <span key={sh} className="text-[9px] font-medium" style={{ color: SIHUA_COLORS[sh] }}>
-                {getStarVi(starName)} Hóa {sh}
+                {getStarVi(starName)} Hóa {getSiHuaShortVi(sh)}
               </span>
             );
           })}
