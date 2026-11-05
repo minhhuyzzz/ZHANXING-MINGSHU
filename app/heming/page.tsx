@@ -223,6 +223,7 @@ export default function HemingPage() {
   const [analysisError, setAnalysisError] = useState(false);
   const [apiMissing, setApiMissing] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
+  const [activeQuestion, setActiveQuestion] = useState<string | null>(null);
   const analysisRef = useRef<HTMLDivElement>(null);
 
   const generateChart = useCallback(async (info: BirthInfo): Promise<ZiweiChart | null> => {
@@ -243,6 +244,9 @@ export default function HemingPage() {
     if (!isFormReady(formA) || !isFormReady(formB)) {
       setFormError('Vui lòng điền đầy đủ ngày giờ sinh của cả hai người');
       return;
+    }
+    if (typeof setActiveQuestion === 'function') {
+      setActiveQuestion(q || null);
     }
     setAnalyzing(true);
     setAnalysis('');
@@ -546,6 +550,55 @@ export default function HemingPage() {
                 </div>
               )}
 
+              {/* Banner hiển thị câu hỏi đang được phân tích */}
+              {activeQuestion && (
+                <div style={{
+                  marginBottom: '20px',
+                  padding: '14px 18px',
+                  borderRadius: '14px',
+                  background: 'linear-gradient(135deg, rgba(212,168,67,0.15) 0%, rgba(212,168,67,0.05) 100%)',
+                  border: '1px solid rgba(212,168,67,0.4)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: '12px',
+                  flexWrap: 'wrap',
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <span style={{ fontSize: '18px', color: 'var(--ac)' }}>✦</span>
+                    <div>
+                      <div style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--ac)', fontWeight: 700 }}>
+                        Đang Phân Tích Chuyên Sâu Theo Câu Hỏi:
+                      </div>
+                      <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--tx-0)', marginTop: '2px' }}>
+                        &quot;{activeQuestion}&quot;
+                      </div>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => {
+                      if (typeof setActiveQuestion === 'function') setActiveQuestion(null);
+                      setQuestion('');
+                      runAnalysis();
+                    }}
+                    disabled={analyzing}
+                    style={{
+                      fontSize: '11.5px',
+                      padding: '6px 14px',
+                      borderRadius: '8px',
+                      border: '1px solid var(--bdr-med)',
+                      background: 'var(--bg-1)',
+                      color: 'var(--tx-1)',
+                      cursor: analyzing ? 'not-allowed' : 'pointer',
+                      transition: 'all 0.2s',
+                    }}
+                    title="Quay lại phân tích tổng quan toàn diện"
+                  >
+                    ↺ Xem Luận Giải Tổng Thể
+                  </button>
+                </div>
+              )}
+
               {/* Luận giải chi tiết */}
               <AiContent text={analysis} streaming={analyzing} />
             </div>
@@ -578,7 +631,11 @@ export default function HemingPage() {
               ].map(q => (
                 <button
                   key={q}
-                  onClick={() => { setQuestion(q); runAnalysis(q); }}
+                  onClick={() => {
+                    setQuestion(q);
+                    runAnalysis(q);
+                    setTimeout(() => analysisRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+                  }}
                   disabled={analyzing}
                   style={{
                     fontSize: '12px', padding: '7px 16px',

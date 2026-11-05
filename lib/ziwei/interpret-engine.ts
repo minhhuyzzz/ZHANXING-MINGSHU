@@ -152,6 +152,170 @@ function formatStarsVi(palace?: Palace): string {
   }).join(' và ');
 }
 
+/** Giải đáp thắc mắc chuyên biệt do người dùng tự đặt câu hỏi trong khung chat */
+export function answerIndividualUserQuery(chart: ZiweiChart, query: string): string {
+  const q = query.trim();
+  const lowerQ = q.toLowerCase();
+
+  const mingPalace = chart.palaces.find(p => p.branch === chart.mingGongBranch);
+  const shenPalace = chart.palaces.find(p => p.branch === chart.shenGongBranch);
+  const careerPalace = findPalace(chart, '官禄');
+  const wealthPalace = findPalace(chart, '财帛');
+  const travelPalace = findPalace(chart, '迁移');
+  const spousePalace = findPalace(chart, '夫妻');
+  const fudePalace = findPalace(chart, '福德');
+  const healthPalace = findPalace(chart, '疾厄');
+  const propertyPalace = findPalace(chart, '田宅');
+  const childrenPalace = findPalace(chart, '子女');
+  const parentsPalace = findPalace(chart, '父母');
+
+  const mingMajorStars = mingPalace?.stars.filter(s => s.type === 'major') || [];
+  const primaryStar = mingMajorStars[0]?.name || '';
+  const starNameVi = primaryStar ? getStarVi(primaryStar) : 'Vô Chính Diệu';
+
+  // 1. TÌNH DUYÊN & KẾT HÔN
+  if (
+    lowerQ.includes('kết hôn') || lowerQ.includes('cưới') || lowerQ.includes('tình duyên') ||
+    lowerQ.includes('người yêu') || lowerQ.includes('lập gia đình') || lowerQ.includes('lấy chồng') ||
+    lowerQ.includes('lấy vợ') || lowerQ.includes('hôn nhân') || lowerQ.includes('bạn đời')
+  ) {
+    const spouseStars = formatStarsVi(spousePalace);
+    const fudeStars = formatStarsVi(fudePalace);
+    const mainSpouseStar = spousePalace?.stars.find(s => s.type === 'major')?.name || '';
+    const fuqiInfo = STAR_IN_FUQI_GU[mainSpouseStar];
+
+    return `**【Giải Đáp Thắc Mắc: "${q}"】**
+
+**1. Khảo sát Cung Phu Thê & Cung Phúc Đức:**
+- **Cung Phu Thê tọa thủ:** Hội tụ tinh diệu: ${spouseStars}.
+- **Cung Phúc Đức (gốc rễ nghiệp duyên trường cửu):** Hội tụ: ${fudeStars}.
+- **Đặc trưng duyên phối ngẫu:** ${fuqiInfo?.summary || 'Tình duyên cần sự đồng điệu tâm hồn và kiên nhẫn bồi đắp. Cung vị này cho thấy người bạn đời có năng lực độc lập và cá tính riêng biệt.'}
+
+**2. Thời điểm cát lợi & Định hướng hôn nhân:**
+- Thầy Nghê Hải Hà dạy: *"Hôn nhân là việc trọng đại đời người, xem đại hạn và lưu niên khi cung Phu Thê hoặc Mệnh gặp Đào Hoa, Hồng Loan, Thiên Hỷ hoặc Hóa Lộc, Hóa Khoa củng chiếu là lúc duyên lành nở rộ."*
+- ${spousePalace?.stars.some(s => ['七杀', '破军', '贪狼', '巨门', '擎羊', '陀罗', '火星', '铃星'].includes(s.name))
+  ? 'Cung Phu Thê có sát tinh hoặc biến tinh tọa thủ, mệnh chủ nên kết hôn muộn (sau 28 - 30 tuổi) khi sự nghiệp đã vững vàng và tâm tính trầm ổn, như vậy hôn nhân sẽ tránh được sóng gió và hạnh phúc trọn vẹn.'
+  : 'Cung Phu Thê tọa cát tinh hiền hòa, duyên lành đến tự nhiên trong các năm tam hợp Hợi - Mão - Mùi hoặc Dần - Ngọ - Tuất theo lưu niên đào hoa.'}
+
+**3. Khẩu quyết Thầy Nghê Hải Hà (*Thiên Kỷ*):**
+*"Hôn nhân thành bại 1/3 do mệnh, 1/3 do sự bao dung nhường nhịn, 1/3 do phong thủy phòng ngủ. Đặt phòng ngủ vợ chồng tại Tây Bắc (quẻ Địa Thiên Thái) để gia đạo luôn thuận hòa, êm ấm trường cửu."*`;
+  }
+
+  // 2. CÔNG VIỆC, NGHỀ NGHIỆP & THĂNG TIẾN
+  if (
+    lowerQ.includes('công việc') || lowerQ.includes('sự nghiệp') || lowerQ.includes('đổi việc') ||
+    lowerQ.includes('nhảy việc') || lowerQ.includes('thăng tiến') || lowerQ.includes('làm ăn') ||
+    lowerQ.includes('kinh doanh') || lowerQ.includes('nghề') || lowerQ.includes('quan lộc')
+  ) {
+    const careerStars = formatStarsVi(careerPalace);
+    const wealthStars = formatStarsVi(wealthPalace);
+
+    return `**【Giải Đáp Thắc Mắc: "${q}"】**
+
+**1. Định vị Cung Quan Lộc (Sự Nghiệp) & Cung Mệnh:**
+- **Cung Quan Lộc hội tụ:** ${careerStars}.
+- **Mệnh chủ tọa tinh:** **${starNameVi}** — chủ về ${STAR_NATURE_VI[primaryStar]?.role || 'năng lực thích ứng và quyền biến theo thời thế'}.
+- **Thế sự nghiệp:** ${careerPalace?.stars.some(s => ['七杀', '破军', '贪狼', '武曲'].includes(s.name))
+  ? 'Thích hợp vai trò tiên phong, tự chủ lập nghiệp, thương trường kinh doanh hoặc các lĩnh vực đột phá, sáng tạo đổi mới.'
+  : 'Thích hợp phát triển chuyên môn sâu sắc, quản lý dự án, cố vấn chiến lược, công chức hoặc các tổ chức quy mô lớn.'}
+
+**2. Đánh giá thời cơ & Quyết định biến động (Đổi việc / Khởi sự):**
+- Thầy Nghê Hải Hà dạy: *"Muốn biết có nên chuyển đổi công việc hay không, hãy nhìn xem cung Quan Lộc và Mệnh có Hóa Quyền (nắm thực quyền), Hóa Lộc (tài nguyên tăng) hay Hóa Kỵ (trở ngại, áp lực). Gặp cát tinh thì mạnh dạn xuất kích, gặp Kỵ tinh thì án binh bất động, lấy việc trau dồi nội lực làm gốc."*
+- Cung Quan Lộc phối chiếu với Cung Tài Bạch (${wealthStars}) tạo thế hỗ trợ: Thực tài của bạn sẽ chuyển hóa thành danh tiếng và thu nhập xứng đáng khi bạn tập trung phát huy tối đa thế mạnh cốt lõi.
+
+**3. Lời khuyên định hướng:**
+- Khi đứng trước ngã rẽ chuyển việc: Ưu tiên môi trường cho phép bạn phát huy sự chủ động và tự do tư duy. Tránh vội vã đưa ra quyết định khi tâm trí đang căng thẳng.`;
+  }
+
+  // 3. TÀI CHÍNH, TIỀN TÀI & ĐẦU TƯ
+  if (
+    lowerQ.includes('tài chính') || lowerQ.includes('tiền') || lowerQ.includes('tài lộc') ||
+    lowerQ.includes('giàu') || lowerQ.includes('đầu tư') || lowerQ.includes('nhà đất') ||
+    lowerQ.includes('bất động sản') || lowerQ.includes('tài bạch')
+  ) {
+    const wealthStars = formatStarsVi(wealthPalace);
+    const propStars = formatStarsVi(propertyPalace);
+
+    return `**【Giải Đáp Thắc Mắc: "${q}"】**
+
+**1. Khảo sát Cung Tài Bạch (Dòng tiền) & Cung Điền Trạch (Kho tích lũy):**
+- **Cung Tài Bạch:** Hội tụ tinh diệu: ${wealthStars}. Thể hiện năng lực tạo dòng tiền lưu động và cơ hội gia tăng thu nhập.
+- **Cung Điền Trạch:** Hội tụ tinh diệu: ${propStars}. Thể hiện khả năng giữ tiền, bất động sản và tài sản thừa kế.
+- **Y pháp Nghê Sư:** *"Tài Bạch vi ngọc, Điền Trạch vi khố. Kiếm được nhiều tiền ở Tài Bạch mà Điền Trạch rỗng thì như giỏ tre múc nước. Người có trí tuệ luôn chuyển dòng tiền lưu động thành đất đai, nhà cửa và tài sản thực."*
+
+**2. Chiến lược tích lũy & Đầu tư tài chính:**
+- Khả năng tạo ra của cải của bạn gắn liền với phẩm chất của sao **${starNameVi}**. Khi nguồn thu dồi dào, hãy ưu tiên trích lập quỹ dự phòng và chuyển đổi vào các tài sản kiên cố.
+- Cảnh giác với các hình thức đầu cơ may rủi ngắn hạn, đặc biệt khi các cung vị tài chính gặp sát tinh như Địa Không, Địa Kiếp hay Kình Dương. Hãy đầu tư vào giá trị thực chất và chuyên môn bản thân.`;
+  }
+
+  // 4. SỨC KHỎE, TẠNG PHỦ & DƯỠNG SINH
+  if (
+    lowerQ.includes('sức khỏe') || lowerQ.includes('bệnh') || lowerQ.includes('tật ách') ||
+    lowerQ.includes('ngủ') || lowerQ.includes('thuốc') || lowerQ.includes('y tế') ||
+    lowerQ.includes('tạng phủ') || lowerQ.includes('kinh lạc')
+  ) {
+    const healthStars = formatStarsVi(healthPalace);
+    const branchIdx = healthPalace?.branch ?? 0;
+    const organInfo = BRANCH_ORGAN_MAP[branchIdx] || { organ: 'Hệ tiêu hóa và ngũ tạng', note: 'Cần chú ý điều độ sinh hoạt và giữ nhịp thở sâu.' };
+
+    return `**【Giải Đáp Thắc Mắc: "${q}"】**
+
+**1. Khảo sát Cung Tật Ách theo Y Đạo Nghê Hải Hà:**
+- **Cung Tật Ách tọa tại địa chi:** ${BRANCHES[branchIdx]} (${healthPalace?.name ? getPalaceVi(healthPalace.name) : 'Tật Ách'}).
+- **Tinh diệu hội tụ:** ${healthStars}.
+- **Tạng phủ tương ứng tiên thiên:** **${organInfo.organ}**.
+- **Kinh lạc vận hành:** ${organInfo.note}.
+
+**2. Lời khuyên dưỡng sinh Thầy Nghê Hải Hà (*Thiên Kỷ - Hoàng Đế Nội Kinh*):**
+- *"Bách bệnh sinh ra do khí huyết ứ trệ và thức khuya tổn Can Đởm. Muốn dưỡng mệnh trường thọ, tiên quyết phải ngủ say trước 23h đêm (giờ Tý) để kinh Đởm lọc máu sinh tủy mới."*
+- Giữ tinh thần thanh tịnh, vận động điều độ hàng ngày để dương khí lưu thông khắp cơ thể, bách tà bất xâm.`;
+  }
+
+  // 5. XUẤT NGOẠI, ĐI XA & ĐỊNH CƯ
+  if (
+    lowerQ.includes('xuất ngoại') || lowerQ.includes('đi xa') || lowerQ.includes('nước ngoài') ||
+    lowerQ.includes('định cư') || lowerQ.includes('du học') || lowerQ.includes('thiên di')
+  ) {
+    const travelStars = formatStarsVi(travelPalace);
+
+    return `**【Giải Đáp Thắc Mắc: "${q}"】**
+
+**1. Khảo sát Cung Thiên Di (Đối ngoại & Môi trường phương xa):**
+- **Cung Thiên Di hội tụ:** ${travelStars}.
+- **Thế tương quan Mệnh - Di:** Mệnh tọa ${starNameVi}, đối diện là Cung Thiên Di. 
+- ${travelPalace?.stars.some(s => ['天马', '太阳', '太阴', '七杀', '破军', '贪狼'].includes(s.name))
+  ? 'Lá số có duyên nợ lớn với phương xa. Càng đi ra ngoài môi trường rộng lớn, bạn càng dễ gặp quý nhân trợ lực và mở rộng tầm nhìn sự nghiệp.'
+  : 'Môi trường quen thuộc hoặc quê hương là bệ phóng an toàn, nếu đi xa làm ăn nên chuẩn bị kế hoạch chu đáo và tìm kiếm đối tác đáng tin cậy.'}
+
+**2. Lời khuyên hành trình:**
+- Đi xa cần chú ý giấy tờ pháp lý và phương tiện di chuyển. Luôn giữ thái độ hòa nhã, khiêm tốn khi tiếp xúc với môi trường văn hóa mới.`;
+  }
+
+  // 6. CON CÁI & HẬU DUỆ
+  if (lowerQ.includes('con cái') || lowerQ.includes('sinh con') || lowerQ.includes('tử tức')) {
+    const childrenStars = formatStarsVi(childrenPalace);
+    return `**【Giải Đáp Thắc Mắc: "${q}"】**
+
+**1. Khảo sát Cung Tử Tức:**
+- **Cung Tử Tức hội tụ:** ${childrenStars}.
+- Thế cung phản ánh con cái là người thông minh, có chí tiến thủ và mang lại niềm vui cho gia đình.
+
+**2. Lời khuyên theo Thiên Kỷ:**
+- Chú trọng giáo dục nhân cách từ nhỏ, tạo môi trường gia đình ấm áp, yêu thương để các con phát triển toàn diện cả trí tuệ lẫn đạo đức.`;
+  }
+
+  // 7. CÂU HỎI TÙY BIẾN KHÁC
+  return `**【Giải Đáp Thắc Mắc: "${q}"】**
+
+**1. Chiếu rọi từ Tinh Bàn Mệnh Chủ:**
+- **Bản mệnh tọa tinh:** **${starNameVi}** (${primaryStar || 'Vô Chính Diệu'}), nạp âm Cục số **${getWuXingJuVi(chart.wuxingJuName)}**.
+- Đối với vấn đề bạn đang băn khoăn (*"${q}"*), cấu trúc tinh bàn cho thấy bạn có nội lực mạnh mẽ và trực giác nhạy bén để tự tìm ra lời giải đáp tốt nhất.
+- Năng lượng các cung vị trọng yếu (Mệnh, Quan, Tài, Di) đang vận động nhịp nhàng, mở ra những cơ hội chuyển hóa tích cực nếu bạn kiên trì và giữ vững niềm tin.
+
+**2. Kim chỉ nam hành động theo Thầy Nghê Hải Hà (*Thiên Kỷ*):**
+- *"Đại đạo chí giản — việc gì trong đời cũng quy về chữ Tâm và chữ Nhẫn. Hiểu mệnh để nắm bắt thiên thời, sửa đổi thói quen để làm chủ nhân sự, và đặt mình đúng phong thủy địa lý thì mọi gian khó đều chuyển thành đại phúc."*`;
+}
+
 export function generateInterpretStream(ctx: InterpretContext): string {
   const { chart, topic = 'overview', selectedPalaceName, selectedStarName, selectedSiHua } = ctx;
   const patterns = detectPatterns(chart);
@@ -193,6 +357,12 @@ Khi Hóa ${siHua} đóng tại đây, tính chất tự nhiên của ${starVi} �
 
 **【Khẩu quyết Nghê Hải Hà (*Thiên Kỷ*)】**
 "Tứ Hóa là linh hồn chuyển dịch của toàn bộ mệnh bàn. Lộc sinh Tài, Quyền lập Thân, Khoa giải Ách, Kỵ tàng Đạo. Gặp Kỵ đừng sợ, Kỵ chính là nơi vũ trụ trao gửi bài học để ta tôi luyện thành tựu lớn!"`;
+  }
+
+  // ── Xử lý khi người dùng trực tiếp đặt câu hỏi tùy biến trong khung chat ──
+  const isDirectQuestion = ctx.userQuery && !ctx.userQuery.includes('theo cấu trúc sau:') && ctx.userQuery.trim().length > 0;
+  if (isDirectQuestion) {
+    return answerIndividualUserQuery(chart, ctx.userQuery!.trim());
   }
 
   // ── XỬ LÝ THEO CHỦ ĐỀ ──
