@@ -39,8 +39,23 @@ export async function POST(req: NextRequest) {
     const lastMessage = messages && messages.length > 0 ? messages[messages.length - 1].content : '';
     const lower = lastMessage.toLowerCase();
 
-    // ── 1. Nhận diện chủ đề (Tiếng Việt & Tiếng Trung) ──
-    let topic = 'overview';
+    // ── 1. Nhận diện cung vị được hỏi cụ thể ──
+    let selectedPalaceName: string | undefined = undefined;
+    for (const [viName, cnName] of Object.entries(PALACE_NAME_VI_TO_CN)) {
+      if (lower.includes(`cung ${viName}`) || lower.includes(`【${viName}】`)) {
+        selectedPalaceName = cnName;
+        break;
+      }
+    }
+    if (!selectedPalaceName) {
+      const palaceMatch = lastMessage.match(/【(.+?)(?:宫)?】/);
+      if (palaceMatch && palaceMatch[1]) {
+        selectedPalaceName = palaceMatch[1].replace('宫', '');
+      }
+    }
+
+    // ── 2. Nhận diện chủ đề (Tiếng Việt & Tiếng Trung) ──
+    let topic = selectedPalaceName ? 'palace' : 'overview';
     if (
       lower.includes('tình cảm') || lower.includes('hôn nhân') || lower.includes('phu thê') ||
       lower.includes('bạn đời') || lower.includes('duyên phận') ||
@@ -72,21 +87,6 @@ export async function POST(req: NextRequest) {
       topic = 'personality';
     }
 
-    // ── 2. Nhận diện cung vị được hỏi cụ thể ──
-    let selectedPalaceName: string | undefined = undefined;
-    for (const [viName, cnName] of Object.entries(PALACE_NAME_VI_TO_CN)) {
-      if (lower.includes(`cung ${viName}`) || lower.includes(`【${viName}】`)) {
-        selectedPalaceName = cnName;
-        break;
-      }
-    }
-    if (!selectedPalaceName) {
-      const palaceMatch = lastMessage.match(/【(.+?)(?:宫)?】/);
-      if (palaceMatch && palaceMatch[1]) {
-        selectedPalaceName = palaceMatch[1].replace('宫', '');
-      }
-    }
-
     // ── 3. Nhận diện Tứ Hóa cụ thể ──
     let selectedSiHua: { starName: string; siHua: string } | undefined = undefined;
     const sihuaMatchVi = lastMessage.match(/sao\s+([a-zA-Zà-ỹÀ-Ỹ\s]+?)\s+Hóa\s+(Lộc|Quyền|Khoa|Kỵ)/i);
@@ -98,14 +98,31 @@ export async function POST(req: NextRequest) {
     }
 
     // ── 4. Kiểm tra xem có cấu hình AI ngoại viện không ──
-    const apiKey = process.env.DEEPSEEK_API_KEY || process.env.GEMINI_API_KEY || process.env.OPENAI_API_KEY || process.env.MIMO_API_KEY;
+    const geminiKey = process.env.GEMINI_API_KEY;
+    const deepseekKey = process.env.DEEPSEEK_API_KEY;
+    const openaiKey = process.env.OPENAI_API_KEY;
+    const mimoKey = process.env.MIMO_API_KEY;
+    const apiKey = geminiKey || deepseekKey || openaiKey || mimoKey;
 
-    if (apiKey && process.env.AI_PROVIDER) {
+    if (apiKey) {
       try {
-        const baseUrl = process.env.DEEPSEEK_API_KEY
-          ? 'https://api.deepseek.com/v1'
-          : process.env.MIMO_BASE_URL || 'https://api.openai.com/v1';
-        const model = process.env.DEEPSEEK_API_KEY ? 'deepseek-chat' : (process.env.MIMO_MODEL || 'gpt-4o');
+        let baseUrl = 'https://api.openai.com/v1';
+        let model = 'gpt-4o';
+
+        if (geminiKey || process.env.AI_PROVIDER === 'gemini') {
+          // Google Gemini OpenAI-compatible endpoint
+          baseUrl = process.env.GEMINI_BASE_URL || 'https://generativelanguage.googleapis.com/v1beta/openai';
+          model = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
+        } else if (deepseekKey || process.env.AI_PROVIDER === 'deepseek') {
+          baseUrl = process.env.DEEPSEEK_BASE_URL || 'https://api.deepseek.com/v1';
+          model = process.env.DEEPSEEK_MODEL || 'deepseek-chat';
+        } else if (mimoKey || process.env.AI_PROVIDER === 'mimo') {
+          baseUrl = process.env.MIMO_BASE_URL || 'https://api.openai.com/v1';
+          model = process.env.MIMO_MODEL || 'gpt-4o';
+        } else if (openaiKey || process.env.AI_PROVIDER === 'openai') {
+          baseUrl = process.env.OPENAI_BASE_URL || 'https://api.openai.com/v1';
+          model = process.env.OPENAI_MODEL || 'gpt-4o-mini';
+        }
 
         const systemPrompt = `Bạn là Đại Sư Chiêm Tinh Tử Vi Đẩu Số cao cấp (Thương hiệu ZHANXING MINGSHU · 占星明舒), thấu suốt hệ thống của Thầy Nghê Hải Hà (Ni Haisha - Thiên Kỷ) và cổ tịch Tử Vi Đẩu Số Toàn Thư.
 Khi luận giải cho người hỏi:

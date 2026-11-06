@@ -23,10 +23,10 @@ export function useHistory() {
 
   const save = useCallback((form: BirthFormState) => {
     const label = [
-      form.name,
-      `${form.year}年${form.month}月${form.day}日`,
+      form.name?.trim() || 'Lá số',
+      `Ngày ${form.day}/${form.month}/${form.year}`,
       form.city || form.province || '',
-      form.gender === 'male' ? '男' : '女',
+      form.gender === 'male' ? 'Nam' : 'Nữ',
     ].filter(Boolean).join(' · ');
 
     const entry: HistoryEntry = {

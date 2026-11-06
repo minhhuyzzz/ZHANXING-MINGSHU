@@ -137,6 +137,90 @@ function getPalaceByBranch(chart: ZiweiChart, branch: number): Palace | undefine
   return chart.palaces.find(p => p.branch === ((branch % 12) + 12) % 12);
 }
 
+const PALACE_ROLES_MAP: Record<string, string> = {
+  '命宫':   'Bản thân, tính cách, tiên thiên mệnh cách',
+  '兄弟':   'Quan hệ anh em, đồng sự, đối tác làm ăn',
+  '兄弟宫': 'Quan hệ anh em, đồng sự, đối tác làm ăn',
+  '夫妻':   'Duyên nợ tình cảm, hôn nhân, phối ngẫu',
+  '夫妻宫': 'Duyên nợ tình cảm, hôn nhân, phối ngẫu',
+  '子女':   'Duyên phận con cái, hậu bối, học trò',
+  '子女宫': 'Duyên phận con cái, hậu bối, học trò',
+  '财帛':   'Dòng tiền, phương thức tạo ra của cải',
+  '财帛宫': 'Dòng tiền, phương thức tạo ra của cải',
+  '疾厄':   'Thể chất sức khỏe, kinh lạc tạng phủ',
+  '疾厄宫': 'Thể chất sức khỏe, kinh lạc tạng phủ',
+  '迁移':   'Cơ hội đi xa, giao thiệp đối ngoại, xuất ngoại',
+  '迁移宫': 'Cơ hội đi xa, giao thiệp đối ngoại, xuất ngoại',
+  '交友':   'Bạn bè xã hội, quý nhân, nhân viên cấp dưới',
+  '交友宫': 'Bạn bè xã hội, quý nhân, nhân viên cấp dưới',
+  '仆役':   'Bạn bè xã hội, quý nhân, nhân viên cấp dưới',
+  '仆役宫': 'Bạn bè xã hội, quý nhân, nhân viên cấp dưới',
+  '官禄':   'Công danh sự nghiệp, địa vị xã hội, thực quyền',
+  '官禄宫': 'Công danh sự nghiệp, địa vị xã hội, thực quyền',
+  '田宅':   'Bất động sản, điền sản, gia đạo, kho của',
+  '田宅宫': 'Bất động sản, điền sản, gia đạo, kho của',
+  '福德':   'Đời sống tinh thần, phúc ấm tổ tiên, thọ khang',
+  '福德宫': 'Đời sống tinh thần, phúc ấm tổ tiên, thọ khang',
+  '父母':   'Quan hệ phụ mẫu, trưởng bối, văn thư bằng cấp',
+  '父母宫': 'Quan hệ phụ mẫu, trưởng bối, văn thư bằng cấp',
+};
+
+function getPalaceRoleVi(name: string): string {
+  return PALACE_ROLES_MAP[name] || PALACE_ROLES_MAP[name.replace('宫', '')] || 'Cung vị trọng yếu trên tinh bàn';
+}
+
+function interpretPalaceDeep(chart: ZiweiChart, palaceName: string): string {
+  const cleanName = palaceName.replace('宫', '');
+  const pal = findPalace(chart, cleanName) || findPalace(chart, palaceName);
+  const palaceVi = getPalaceVi(cleanName);
+  const branchName = pal?.branch !== undefined ? BRANCHES[pal.branch] : '';
+  const starDesc = formatStarsVi(pal);
+  const role = getPalaceRoleVi(cleanName);
+  const majorStars = pal?.stars.filter(s => s.type === 'major') || [];
+  const satStars = pal?.stars.filter(s => ['擎羊', '陀罗', '火星', '铃星', '地空', '地劫', '化忌'].includes(s.name) || s.siHua === '忌') || [];
+  const catStars = pal?.stars.filter(s => ['左辅', '右弼', '文昌', '文曲', '天魁', '天钺', '禄存', '天马', '化禄', '化权', '化科'].includes(s.name) || (s.siHua && s.siHua !== '忌')) || [];
+
+  const palBranch = pal?.branch ?? 0;
+  const triBranches = [palBranch, (palBranch + 4) % 12, (palBranch + 8) % 12, (palBranch + 6) % 12];
+  const sanFangPalaces = chart.palaces.filter(p => triBranches.includes(p.branch) && p.name !== pal?.name);
+  const sanFangSummary = sanFangPalaces.map(p => `cung **${getPalaceVi(p.name)}** (${formatStarsVi(p)})`).join(', ');
+
+  let specificAdvice = '';
+  if (cleanName === '田宅') {
+    specificAdvice = `Điền Trạch là kho cất giữ gia tài, bất động sản và sự an ổn của gia trạch. Thầy Nghê Hải Hà dạy: "Tài Bạch là dòng tiền lưu động bên ngoài, còn Điền Trạch mới là kho báu giữ tiền thực sự." Cung này có ${catStars.length > 0 ? `các cát tinh (${catStars.map(s => getStarVi(s.name)).join(', ')}) chủ về dễ tích lũy bất động sản vững chắc.` : `tinh diệu bình hòa, nên ưu tiên tích lũy an toàn, chuyển tiền mặt thành tài sản kiên cố.`}`;
+  } else if (cleanName === '福德') {
+    specificAdvice = `Phúc Đức là nguồn mạch tâm linh, tư tưởng sâu kín và phúc báo của tổ tiên. Người xưa nói: "Phúc Đức tốt thì hoạn nạn hóa lành, Phúc Đức suy thì dù giàu sang tâm trí vẫn bất an." Cung này phản ánh mức độ thư thái nội tâm và khả năng tự chữa lành của bạn trước áp lực cuộc sống.`;
+  } else if (cleanName === '兄弟') {
+    specificAdvice = `Cung Huynh Đệ chủ về tình cảm anh chị em ruột thịt kiêm đối tác cùng chung chí hướng. ${satStars.length > 0 ? 'Có sát tinh hội tụ, trong công việc hợp tác làm ăn nên rõ ràng về tài chính, văn bản minh bạch để tránh tổn hại tình nghĩa.' : 'Anh em thuận hòa, có thể tương trợ lẫn nhau khi đứng trước các bước ngoặt cuộc đời.'}`;
+  } else if (cleanName === '父母') {
+    specificAdvice = `Cung Phụ Mẫu chủ về phúc ấm của song thân, trưởng bối và liên quan trực tiếp đến hồ sơ, bằng cấp, thủ tục pháp lý. Cung vị này nhắc nhở mệnh chủ giữ trọn đạo hiếu và cẩn trọng khi ký kết các giấy tờ quan trọng.`;
+  } else if (cleanName === '子女') {
+    specificAdvice = `Cung Tử Tức chủ về duyên phận con cái, học trò và thế hệ nối nghiệp. Gia đạo lấy tình thương và sự tôn trọng tính cách độc lập của con trẻ làm kim chỉ nam để vun vén tình cảm gia đình.`;
+  } else if (cleanName === '交友' || cleanName === '仆役') {
+    specificAdvice = `Cung Nô Bộc (Giao Hữu) chủ về bạn bè xã giao, cấp dưới và trợ lực từ tập thể. ${satStars.length > 0 ? 'Cần cẩn trọng trong việc chọn bạn mà chơi, không nên quá tin tưởng giao phó tài chính bí mật cho người ngoài.' : 'Được bạn bè và cấp dưới tôn trọng, dễ xây dựng mạng lưới quan hệ xã hội lành mạnh.'}`;
+  } else if (cleanName === '迁移') {
+    specificAdvice = `Cung Thiên Di đại diện cho môi trường đối ngoại, cơ hội xuất ngoại và quý nhân phương xa. Cung vị này đối diện trực tiếp Cung Mệnh, mở ra cánh cửa giao thiệp và tầm nhìn rộng lớn. Càng bước ra ngoài cọ xát bạn càng tích lũy được nhiều kinh nghiệm quý báu.`;
+  } else {
+    specificAdvice = `Mỗi cung vị đều là một trường năng lượng bổ trợ cho bản mệnh. Hiểu rõ ưu thế của cát tinh và cảnh giác trước các thử thách sát tinh để luôn chủ động trong vận trình.`;
+  }
+
+  return `**【Cung Vị Định Tính】**
+Cung **${palaceVi}** (${palaceName}) tọa tại địa chi **${branchName}**, chủ quản: **${role}**.
+Tinh diệu tọa thủ bản cung: ${starDesc}.
+${majorStars.length > 0 ? `Chính tinh nắm quyền chi phối: **${majorStars.map(s => getStarVi(s.name)).join(', ')}**.` : 'Cung Vô Chính Diệu, mượn tinh diệu từ cung xung chiếu để định hình năng lượng.'}
+
+**【Chính Tinh & Tứ Hóa Luận Giải】**
+- **Trạng thái tinh diệu:** ${catStars.length > 0 ? `Hội tụ cát diệu (${catStars.map(s => getStarVi(s.name)).join(', ')}) mang lại nguồn trợ lực cát lành và hanh thông.` : 'Tinh diệu bình hòa, mang tính tự lực bồi đắp.'} ${satStars.length > 0 ? `Có sự hiện diện của sát tinh/kỵ tinh (${satStars.map(s => getStarVi(s.name)).join(', ')}), cần lưu tâm để hóa giải xung đột và giữ gìn nội lực.` : ''}
+- **Khẩu quyết Thầy Nghê Hải Hà (*Thiên Kỷ*):** "Cát tinh nhập cung là thời cơ, sát tinh nhập cung là bài học tôi rèn phẩm hạnh. Đạt được tâm thế bình thản trước biến động thì nơi nào cũng là đất phúc."
+
+**【Tam Phương Tứ Chính Liên Động】**
+Cung **${palaceVi}** tương tác mật thiết với tam phương tứ chính gồm: ${sanFangSummary || 'các cung vị củng chiếu'}. Thế liên hoàn này phản ánh sự cộng hưởng giữa năng lượng cá nhân và hoàn cảnh ngoại cảnh.
+
+**【Lời Khuyên Ứng Dụng Thực Tiễn】**
+${specificAdvice}
+Luôn nhớ lời dạy của Thầy Nghê Sư: *"Tiên thiên Mệnh chiếm 1/3, Nhân sự nỗ lực chiếm 1/3, Địa lý phong thủy chiếm 1/3. Biết thiên cơ để tự mình hành xử đúng đắn, đó mới là chân lý."*`;
+}
+
 /** Lấy thông tin sao miếu hãm tứ hóa */
 function formatStarsVi(palace?: Palace): string {
   if (!palace || palace.stars.length === 0) return 'Vô chính diệu (Không có chính tinh, mượn cung xung đối)';
@@ -172,6 +256,8 @@ export function answerIndividualUserQuery(chart: ZiweiChart, query: string): str
   const mingMajorStars = mingPalace?.stars.filter(s => s.type === 'major') || [];
   const primaryStar = mingMajorStars[0]?.name || '';
   const starNameVi = primaryStar ? getStarVi(primaryStar) : 'Vô Chính Diệu';
+  const shenNameClean = (shenPalace?.name || 'Mệnh').replace('宫', '');
+  const shenMeaning = SHEN_GONG_DESC[shenNameClean] || `Thân cư ${getPalaceVi(shenPalace?.name || '')}: Nửa đời sau tập trung phát triển cung vị này.`;
 
   // 1. TÌNH DUYÊN & KẾT HÔN
   if (
@@ -304,13 +390,96 @@ export function answerIndividualUserQuery(chart: ZiweiChart, query: string): str
 - Chú trọng giáo dục nhân cách từ nhỏ, tạo môi trường gia đình ấm áp, yêu thương để các con phát triển toàn diện cả trí tuệ lẫn đạo đức.`;
   }
 
-  // 7. CÂU HỎI TÙY BIẾN KHÁC
+  // 7. VẬN HẠN, ĐẠI HẠN, LƯU NIÊN & THỜI VẬN
+  const currentDx = chart.daXians[chart.currentDaXianIndex];
+  if (
+    lowerQ.includes('vận hạn') || lowerQ.includes('năm nay') || lowerQ.includes('lưu niên') ||
+    lowerQ.includes('đại hạn') || lowerQ.includes('thời vận') || lowerQ.includes('tương lai') ||
+    lowerQ.includes('may mắn') || lowerQ.includes('xui xẻo') || lowerQ.includes('khi nào') ||
+    lowerQ.includes('vận may') || lowerQ.includes('vận')
+  ) {
+    const dxPalace = chart.palaces.find(p => p.name === currentDx?.palaceName || p.name.replace('宫', '') === currentDx?.palaceName?.replace('宫', ''));
+    const dxStars = formatStarsVi(dxPalace);
+    const dxPalaceVi = dxPalace ? getPalaceVi(dxPalace.name) : 'Cung Vị Đại Hạn';
+
+    return `**【Giải Đáp Thắc Mắc: "${q}"】**
+
+**1. Khảo sát Vận Trình Đại Hạn Hiện Tại (${currentDx?.startAge ?? 0} - ${currentDx?.endAge ?? 0} tuổi):**
+- **Đại Hạn chuyển dịch tới:** Cung **${dxPalaceVi}** (${currentDx?.palaceName || ''}), hội tụ tinh diệu: ${dxStars}.
+- **Xu hướng năng lượng 10 năm:** Đây là giai đoạn trọng yếu kích hoạt các cơ hội và thử thách liên quan đến cung ${dxPalaceVi}. Các tinh diệu tọa thủ tại đây định hình môi trường thực tế và phương hướng hành động của bạn.
+
+**2. Nhận định Thời Vận & Lưu Niên theo Thầy Nghê Hải Hà (*Thiên Kỷ*):**
+- *"Đại đạo chí giản — biết vận để thuận thời ứng biến. Khi đại hạn gặp cát tinh củng chiếu thì chủ động nắm bắt thời cơ, dốc sức kiến tạo; khi gặp sát kỵ xung phá thì củng cố nội lực, tu tâm dưỡng tính, lấy thận trọng làm đầu."*
+- Cung vị Đại Hạn có sự tương tác sâu sắc với tam phương tứ chính bản mệnh, mở ra giai đoạn tích lũy kinh nghiệm và chuyển hóa nội tâm quý giá.
+
+**3. Kim chỉ nam hành động:**
+- Giữ tinh thần vững vàng, không nóng vội trước những chậm trễ tạm thời. Tập trung vào những mục tiêu dài hạn có tính thực chất thay vì chạy theo các trào lưu ngắn hạn.`;
+  }
+
+  // 8. BẤT ĐỘNG SẢN, NHÀ ĐẤT & GIA ĐẠO
+  if (lowerQ.includes('nhà đất') || lowerQ.includes('bất động sản') || lowerQ.includes('mua nhà') || lowerQ.includes('đất đai') || lowerQ.includes('nhà cửa') || lowerQ.includes('điền trạch')) {
+    const propStars = formatStarsVi(propertyPalace);
+    return `**【Giải Đáp Thắc Mắc: "${q}"】**
+
+**1. Khảo sát Cung Điền Trạch (Kho của & Bất động sản):**
+- **Cung Điền Trạch hội tụ tinh diệu:** ${propStars}.
+- **Ý pháp Thầy Nghê Hải Hà (*Thiên Kỷ*):** *"Tài Bạch vi ngọc, Điền Trạch vi khố. Người có trí tuệ luôn chuyển dòng tiền lưu động thành đất đai, nhà cửa vững chắc để tích phúc lưu truyền cho hậu thế."*
+
+**2. Chiến lược tích lũy & Bố trí gia trạch:**
+- Xem xét kỹ pháp lý và hướng nhà phù hợp phong thủy trước khi quyết định giao dịch lớn. Khi tài chính dư dả, chuyển tiền vào các tài sản kiên cố sẽ giúp bạn tụ tài bền vững.
+- Giữ gìn không gian sống sạch sẽ, thoáng đãng, hướng Tây Bắc và Trung Cung hài hòa để vượng khí gia đạo hưng long.`;
+  }
+
+  // 9. BẠN BÈ, ĐỒNG NGHIỆP, CẤP DƯỚI & HỢP TÁC
+  const friendsPalace = findPalace(chart, '交友') || findPalace(chart, '仆役');
+  const brotherPalace = findPalace(chart, '兄弟');
+  if (lowerQ.includes('bạn bè') || lowerQ.includes('đồng nghiệp') || lowerQ.includes('cấp dưới') || lowerQ.includes('nô bộc') || lowerQ.includes('giao hữu') || lowerQ.includes('nhân sự') || lowerQ.includes('hợp tác')) {
+    const friendsStars = formatStarsVi(friendsPalace);
+    const brotherStars = formatStarsVi(brotherPalace);
+    return `**【Giải Đáp Thắc Mắc: "${q}"】**
+
+**1. Khảo sát Cung Nô Bộc (Giao Hữu) & Cung Huynh Đệ:**
+- **Cung Nô Bộc (Bạn bè, cấp dưới):** Hội tụ: ${friendsStars}.
+- **Cung Huynh Đệ (Anh em, đối tác ruột thịt):** Hội tụ: ${brotherStars}.
+- **Ý nghĩa quan hệ nhân sự:** Phản ánh mức độ tin cậy của bạn bè xã giao, năng lực điều hành nhân sự và sự hỗ trợ từ các mối quan hệ xã hội.
+
+**2. Lời khuyên đối nhân xử thế theo Thầy Nghê Hải Hà:**
+- "Chọn bạn mà chơi, chọn đối tác mà hợp tác". Rõ ràng về mặt tài chính và trách nhiệm sẽ giúp bạn giữ gìn được tình bạn chân thành và bền chặt dài lâu, tránh bị thị phi lôi kéo.`;
+  }
+
+  // 10. CHA MẸ, TRƯỞNG BỐI, HỌC VẤN & THI CỬ
+  if (lowerQ.includes('cha mẹ') || lowerQ.includes('bố mẹ') || lowerQ.includes('phụ mẫu') || lowerQ.includes('học vấn') || lowerQ.includes('thi cử') || lowerQ.includes('bằng cấp') || lowerQ.includes('học hành')) {
+    const parentsStars = formatStarsVi(parentsPalace);
+    return `**【Giải Đáp Thắc Mắc: "${q}"】**
+
+**1. Khảo sát Cung Phụ Mẫu & Văn Thư Ấn Tín:**
+- **Cung Phụ Mẫu hội tụ tinh diệu:** ${parentsStars}.
+- **Ý nghĩa tiên thiên:** Chi phối mối quan hệ với trưởng bối, phúc ấm gia đình và khả năng học tập, thi cử, đỗ đạt giấy tờ bằng cấp.
+
+**2. Lời khuyên theo Thiên Kỷ Nghê Hải Hà:**
+- Lấy hiếu đạo làm gốc rễ sinh phúc lành. Trong học tập và thi cử, chuẩn bị kiến thức bài bản, tôn trọng quy trình pháp lý để luôn hanh thông, tránh sai sót giấy tờ.`;
+  }
+
+  // 11. ĐỜI SỐNG TINH THẦN & PHÚC ĐỨC
+  if (lowerQ.includes('phúc đức') || lowerQ.includes('tâm linh') || lowerQ.includes('tổ tiên') || lowerQ.includes('thanh thản') || lowerQ.includes('tâm an')) {
+    const fudeStars = formatStarsVi(fudePalace);
+    return `**【Giải Đáp Thắc Mắc: "${q}"】**
+
+**1. Khảo sát Cung Phúc Đức (Nghiệp Quả & Đời Sống Nội Tâm):**
+- **Cung Phúc Đức hội tụ tinh diệu:** ${fudeStars}.
+- **Ý pháp Thầy Nghê Hải Hà (*Thiên Kỷ*):** *"Cung Phúc Đức là gốc rễ quyết định sự bình an trọn đời. Phúc dày thì hoạn nạn hóa lành, phúc mỏng thì dù giàu sang tâm trí vẫn muộn phiền."*
+
+**2. Bài học bồi đắp phúc báo:**
+- Thường xuyên tu tâm dưỡng tính, làm việc thiện lành không màng báo đáp và giữ lòng từ bi bao dung để gia tăng phúc khí cho bản thân và dòng họ.`;
+  }
+
+  // 12. CÂU HỎI TÙY BIẾN KHÁC
   return `**【Giải Đáp Thắc Mắc: "${q}"】**
 
 **1. Chiếu rọi từ Tinh Bàn Mệnh Chủ:**
 - **Bản mệnh tọa tinh:** **${starNameVi}** (${primaryStar || 'Vô Chính Diệu'}), nạp âm Cục số **${getWuXingJuVi(chart.wuxingJuName)}**.
-- Đối với vấn đề bạn đang băn khoăn (*"${q}"*), cấu trúc tinh bàn cho thấy bạn có nội lực mạnh mẽ và trực giác nhạy bén để tự tìm ra lời giải đáp tốt nhất.
-- Năng lượng các cung vị trọng yếu (Mệnh, Quan, Tài, Di) đang vận động nhịp nhàng, mở ra những cơ hội chuyển hóa tích cực nếu bạn kiên trì và giữ vững niềm tin.
+- **Thân Cung:** An tại **${getPalaceVi(shenPalace?.name || '')}** (${shenNameClean}) — ${shenMeaning}
+- Đối với vấn đề bạn đang băn khoăn (*"${q}"*), cấu trúc tinh bàn cho thấy nội lực của sao **${starNameVi}** kết hợp vị thế Thân Cung sẽ là điểm tựa vững chắc giúp bạn tìm ra hướng đi thấu đáo nhất.
 
 **2. Kim chỉ nam hành động theo Thầy Nghê Hải Hà (*Thiên Kỷ*):**
 - *"Đại đạo chí giản — việc gì trong đời cũng quy về chữ Tâm và chữ Nhẫn. Hiểu mệnh để nắm bắt thiên thời, sửa đổi thói quen để làm chủ nhân sự, và đặt mình đúng phong thủy địa lý thì mọi gian khó đều chuyển thành đại phúc."*`;
@@ -329,13 +498,43 @@ export function generateInterpretStream(ctx: InterpretContext): string {
   const propertyPalace = findPalace(chart, '田宅');
 
   const mingMajorStars = mingPalace?.stars.filter(s => s.type === 'major') || [];
-  const primaryStar = mingMajorStars[0]?.name || '';
-  const starInfo = STAR_NATURE_VI[primaryStar] || {
-    role: 'Mệnh Cách Đặc Thù (Vô Chính Diệu)',
-    desc: 'Lá số có thế cục uyển chuyển, mượn tinh diệu cung xung chiếu để khai mở vận trình, phản ứng nhạy bén theo thời cuộc.',
-    niQuote: 'Mệnh vô chính diệu phải xem kỹ thế tam phương tứ chính và cung Thiên Di đối chiếu. Biết mượn lực người khác thì tiền đồ vô lượng.',
-    personality: 'Khả năng thích ứng cao, uyển chuyển đa tài, thông minh linh hoạt nhưng cần xác lập mục tiêu rõ ràng để tránh phân tán năng lượng.',
-  };
+  let starRole = '';
+  let starDesc = '';
+  let starQuote = '';
+  let starPersonality = '';
+
+  if (mingMajorStars.length === 0) {
+    const travelStars = travelPalace?.stars.filter(s => s.type === 'major') || [];
+    const travelNamesVi = travelStars.map(s => `${getStarVi(s.name)} (${s.name})`).join(' và ');
+    starRole = 'Mệnh Cách Đặc Thù (Vô Chính Diệu)';
+    starDesc = travelStars.length > 0
+      ? `Mệnh không có chính tinh tọa thủ, đắc cách mượn tinh diệu đối cung là **${travelNamesVi}** tại Cung Thiên Di củng chiếu để khai mở vận trình.`
+      : 'Lá số có thế cục uyển chuyển, mượn tinh diệu cung xung chiếu để khai mở vận trình, phản ứng nhạy bén theo thời cuộc.';
+    starQuote = 'Thầy Nghê Hải Hà dạy: "Mệnh vô chính diệu phải xem kỹ thế tam phương tứ chính và cung Thiên Di đối chiếu. Biết mượn lực người khác thì tiền đồ vô lượng."';
+    starPersonality = 'Khả năng thích ứng cao, uyển chuyển đa tài, thông minh linh hoạt nhưng cần xác lập mục tiêu rõ ràng để tránh phân tán năng lượng.';
+  } else if (mingMajorStars.length === 1) {
+    const s = mingMajorStars[0].name;
+    const info = STAR_NATURE_VI[s] || { role: s, desc: '', niQuote: '', personality: '' };
+    starRole = info.role;
+    starDesc = info.desc;
+    starQuote = info.niQuote;
+    starPersonality = info.personality;
+  } else {
+    const s1 = mingMajorStars[0].name;
+    const s2 = mingMajorStars[1].name;
+    const info1 = STAR_NATURE_VI[s1];
+    const info2 = STAR_NATURE_VI[s2];
+    const n1 = getStarVi(s1);
+    const n2 = getStarVi(s2);
+    starRole = `Song Tinh Đồng Cung: ${n1} & ${n2} (${s1} - ${s2})`;
+    starDesc = `Thế tinh diệu tương hội giữa ${n1} (${info1?.role || s1}) và ${n2} (${info2?.role || s2}). Cốt cách mang năng lượng: ${info1?.desc || ''} Đồng thời phối hợp cùng: ${info2?.desc || ''}`;
+    starQuote = `Thầy Nghê Hải Hà dạy: "Song tinh đồng cung tại Mệnh tạo nên sự hòa quyện giữa hai trường năng lượng. Cần biết phát huy ưu điểm của từng tinh diệu để tạo bước đột phá phi thường." (${info1?.niQuote || ''} ${info2?.niQuote || ''})`;
+    starPersonality = `Tính cách đa chiều, kết hợp hài hòa giữa ${info1?.personality || ''} và ${info2?.personality || ''}`;
+  }
+
+  const mingStarsLabel = mingMajorStars.length > 0
+    ? mingMajorStars.map(s => `${getStarVi(s.name)} (${s.name})`).join(' và ')
+    : 'Vô Chính Diệu';
 
   const shenNameClean = (shenPalace?.name || 'Mệnh').replace('宫', '');
   const shenMeaning = SHEN_GONG_DESC[shenNameClean] || `Thân cư ${getPalaceVi(shenPalace?.name || '')}: Nửa đời sau tập trung phát triển cung vị này.`;
@@ -365,56 +564,8 @@ Khi Hóa ${siHua} đóng tại đây, tính chất tự nhiên của ${starVi} �
     return answerIndividualUserQuery(chart, ctx.userQuery!.trim());
   }
 
-  // ── XỬ LÝ THEO CHỦ ĐỀ ──
-  if (topic === 'overview' || (!selectedPalaceName && !selectedStarName)) {
-    return `**【Mệnh cách định tính】**
-Lá số sinh năm **${STEMS[chart.lunarInfo?.yearStem ?? 0]}${BRANCHES[chart.lunarInfo?.yearBranch ?? 0]}** (${chart.yinYangGender === '阳男' ? 'Dương Nam' : chart.yinYangGender === '阳女' ? 'Dương Nữ' : chart.yinYangGender === '阴男' ? 'Âm Nam' : 'Âm Nữ'}), Nạp âm Cục số: **${getWuXingJuVi(chart.wuxingJuName)}**.
-Mệnh Cung an tại **${getPalaceVi(mingPalace?.name || '')}** (${BRANCHES[chart.mingGongBranch]}), Thân Cung an tại **${getPalaceVi(shenPalace?.name || '')}** (${BRANCHES[chart.shenGongBranch]}).
-Tinh diệu tọa thủ bản cung: ${formatStarsVi(mingPalace)}.
-${primaryStar ? `Bản mệnh thuộc dạng cách **${starInfo.role}**. Cốt cách mang khí chất: ${starInfo.desc}` : 'Mệnh Vô Chính Diệu, mượn tinh diệu đối cung định hình tính cách, linh hoạt quyền biến.'}
-
-**【Ý nghĩa Thân Cung & Hậu vận】**
-${shenMeaning}
-
-**【Chính tinh giải đoán】**
-${primaryStar ? `Chính tinh **${getStarVi(primaryStar)} (${primaryStar})** thủ Mệnh:
-- Khí chất cốt tủy: ${starInfo.desc}
-- Khẩu quyết Thầy Nghê Hải Hà (*Thiên Kỷ*): "*${starInfo.niQuote}*"` : 'Mệnh Vô Chính Diệu xem cung Thiên Di xung chiếu để định hình tài năng, ra ngoài càng giao thiệp rộng càng sớm đắc lợi.'}
-
-**【Tam phương tứ chính】**
-Thế tam giác Mệnh - Quan - Tài - Di tạo thành thế chân vạc định hình đời người:
-- **Cung Quan Lộc (Sự nghiệp):** Tọa tại ${careerPalace?.name ? getPalaceVi(careerPalace.name) : 'Quan Lộc'}, hội tụ: ${formatStarsVi(careerPalace)}.
-- **Cung Tài Bạch (Tài chính):** Tọa tại ${wealthPalace?.name ? getPalaceVi(wealthPalace.name) : 'Tài Bạch'}, hội tụ: ${formatStarsVi(wealthPalace)}.
-- **Cung Thiên Di (Đối ngoại):** Tọa tại ${travelPalace?.name ? getPalaceVi(travelPalace.name) : 'Thiên Di'}, hội tụ: ${formatStarsVi(travelPalace)}.
-${patterns.length > 0 ? `Các cách cục đắc định trong cổ thư:\n${patternHighlights}` : 'Tam phương hội tụ tinh diệu bình hòa, thuộc mẫu hình tích lũy trung hậu, càng về hậu vận càng vững chãi.'}
-
-**【Đại Hạn hiện tại】**
-Bản mệnh đang tại đại hạn chuyển biến của cuộc đời, luân chuyển theo chiều vòng vận. Năng lượng đại hạn kích hoạt các cung vị then chốt, đòi hỏi sự linh hoạt và nắm bắt thời cơ.
-
-**【Ưu thế & Lưu ý】**
-- **Ưu thế thiên bẩm:** ${primaryStar ? `Nội lực vững chắc từ sao ${getStarVi(primaryStar)}, tư duy độc lập và năng lực kiên trì vượt khó.` : 'Thích nghi uyển chuyển, khéo nắm bắt thời cơ.'}
-- **Lời răn Thầy Nghê Hải Hà (*Thiên Kỷ*):** "Tiên thiên Mệnh chiếm 1/3, Phong thủy Địa lý chiếm 1/3, Nhân sự nỗ lực chiếm 1/3. Nếu ta biết mệnh, sửa đổi thói quen và đặt mình đúng phong thủy thì 2/3 chắc chắn thắng 1/3 mệnh trời!"`;
-  }
-
-  if (topic === 'personality') {
-    return `**【Khí chất chủ đạo】**
-Cốt cách tâm hồn được định hình bởi chính tinh thủ Mệnh: **${primaryStar ? getStarVi(primaryStar) : 'Vô Chính Diệu'}**.
-- Đặc tính cốt lõi: ${starInfo.personality}
-- Phong cách tư duy: Luôn có xu hướng chủ động, có chiều sâu nội tâm và yêu cầu cao với bản thân.
-
-**【Tâm lý đa chiều】**
-Sự kết hợp giữa Mệnh Cung (tiên thiên) và Thân Cung (${getPalaceVi(shenPalace?.name || '')}):
-- Thời trẻ: Thể hiện rõ cá tính và lý tưởng của Mệnh cung.
-- Sau 30 tuổi: Chuyển dịch mạnh mẽ về phong cách của Thân cung, ngày càng chín chắn, thực tế và có định hướng vững vàng.
-
-**【Phong cách giao tiếp & Xã hội】**
-Cung Thiên Di và Nô Bộc hội tụ tinh diệu phản ánh mẫu người coi trọng chữ tín, phân biệt rõ bạn bè và đối tác, luôn giữ thái độ tôn trọng nhưng không dễ dãi để người khác thao túng.
-
-**【Ưu điểm & Bài học tu thân】**
-- **Ưu điểm lớn:** Trực giác nhạy bén, khả năng nhìn người và năng lực tự học hỏi không ngừng.
-- **Bài học tu dưỡng:** Tránh cố chấp trong những việc nhỏ, học cách buông bỏ điều không thể thay đổi để tâm trí luôn an nhiên tự tại.`;
-  }
-
+  // ── XỬ LÝ THEO CHỦ ĐỀ & CUNG VỊ ĐƯỢC CHỌN ──
+  // 1. Tình duyên / Cung Phu Thê
   if (topic === 'love' || selectedPalaceName === '夫妻' || selectedPalaceName === '夫妻宫') {
     const spouseStars = spousePalace?.stars.filter(s => s.type === 'major') || [];
     const mainSpouseStar = spouseStars[0]?.name || '';
@@ -436,6 +587,7 @@ Cung Phu Thê hội chiếu trực tiếp cùng Cung Thiên Di, Cung Quan Lộc 
 ${fuqiInfo?.timing || 'Nên kết hôn khi sự nghiệp và tâm lý đã chín chắn. Trong đời sống lứa đôi, lắng nghe nhiều hơn phán xét để giữ trọn vẹn hòa khí gia đạo.'}`;
   }
 
+  // 2. Sự nghiệp / Cung Quan Lộc
   if (topic === 'career' || selectedPalaceName === '官禄' || selectedPalaceName === '官禄宫') {
     return `**【Sự nghiệp cách cục】**
 Cung Quan Lộc đóng tại cung **${careerPalace?.name ? getPalaceVi(careerPalace.name) : 'Quan Lộc'}**, hội tụ các tinh diệu: ${formatStarsVi(careerPalace)}.
@@ -453,6 +605,7 @@ Cung Quan Lộc tam hợp với Cung Tài Bạch và Cung Mệnh. Thực lực c
 Không ngừng nâng cao giá trị độc bản của bản thân. Khi gặp vận hạn thử thách, lấy việc bồi dưỡng tri thức làm gốc, chờ đón thời cơ để xuất kích bứt phá.`;
   }
 
+  // 3. Tài lộc / Cung Tài Bạch
   if (topic === 'wealth' || selectedPalaceName === '财帛' || selectedPalaceName === '财帛宫') {
     return `**【Tài lộc cách cục】**
 Cung Tài Bạch đóng tại cung **${wealthPalace?.name ? getPalaceVi(wealthPalace.name) : 'Tài Bạch'}**, hội tụ: ${formatStarsVi(wealthPalace)}.
@@ -470,6 +623,7 @@ Thầy Nghê Hải Hà dạy: "Tài Bạch là dòng tiền lưu động bên ng
 Xây dựng quỹ dự phòng an toàn, không bỏ tất cả trứng vào một giỏ và luôn duy trì thói quen tích lũy tài sản thực.`;
   }
 
+  // 4. Sức khỏe / Cung Tật Ách
   if (topic === 'health' || selectedPalaceName === '疾厄' || selectedPalaceName === '疾厄宫') {
     const branchIdx = healthPalace?.branch ?? 0;
     const organInfo = BRANCH_ORGAN_MAP[branchIdx] || { organ: 'Hệ tiêu hóa và ngũ tạng', note: 'Cần chú ý điều độ sinh hoạt và giữ nhịp thở sâu.' };
@@ -491,22 +645,59 @@ Lưu ý các giai đoạn chuyển mùa và những năm gặp sát tinh hội t
 - Rèn luyện thể thao điều độ, giữ tâm thế an nhiên thanh tịnh để chính khí dồi dào, bách bệnh bất xâm.`;
   }
 
-  // ── Luận giải riêng cho từng cung vị cụ thể khi người dùng click vào cung ──
-  if (selectedPalaceName) {
-    const pal = findPalace(chart, selectedPalaceName);
-    return `**【Vị trí & Khái quát cung】**
-Cung **${getPalaceVi(selectedPalaceName)}** (${selectedPalaceName}) tọa tại địa chi **${pal?.branch !== undefined ? BRANCHES[pal.branch] : ''}**, hội tụ các tinh diệu: ${formatStarsVi(pal)}.
-Ý nghĩa trong toàn bộ lá số: Chi phối trực tiếp năng lượng và các mối quan hệ nhân duyên tương ứng của mệnh chủ.
+  // 5. Tính cách
+  if (topic === 'personality') {
+    return `**【Khí chất chủ đạo】**
+Cốt cách tâm hồn được định hình bởi chính tinh thủ Mệnh: **${mingStarsLabel}**.
+- Đặc tính cốt lõi: ${starPersonality}
+- Phong cách tư duy: Luôn có xu hướng chủ động, có chiều sâu nội tâm và ý thức tự tôn cao trong mọi hoàn cảnh.
 
-**【Tổ hợp tinh diệu】**
-Sự phối chiếu của các sao tọa thủ phản ánh rõ nét những thuận lợi cũng như thách thức mà bạn cần trải qua trong phương diện này.
+**【Tâm lý đa chiều】**
+Sự kết hợp giữa Mệnh Cung (tiên thiên) và Thân Cung (${getPalaceVi(shenPalace?.name || '')}):
+- Thời trẻ: Thể hiện rõ cá tính và lý tưởng của Mệnh cung.
+- Sau 30 tuổi: Chuyển dịch mạnh mẽ về phong cách của Thân cung, ngày càng chín chắn, thực tế và có định hướng vững vàng.
 
-**【Khẩu quyết Thầy Nghê Hải Hà】**
-"Mỗi cung vị là một thao trường rèn luyện bản thân. Sao tốt giúp ta có đà tiến, sao xấu nhắc ta phải cẩn trọng tu thân. Biết trước thiên cơ để chủ động chuyển bại thành thắng!"
+**【Phong cách giao tiếp & Xã hội】**
+Cung Thiên Di và Nô Bộc hội tụ tinh diệu phản ánh mẫu người coi trọng chữ tín, phân biệt rõ bạn bè và đối tác, luôn giữ thái độ tôn trọng nhưng không dễ dãi để người khác thao túng.
 
-**【Lời khuyên ứng xử】**
-Phát huy tối đa thế mạnh của các cát tinh, hóa giải sát tinh bằng sự kiên nhẫn, khiêm tốn và hành động thực tế.`;
+**【Ưu điểm & Bài học tu thân】**
+- **Ưu điểm lớn:** Trực giác nhạy bén, khả năng nhìn người và năng lực tự học hỏi không ngừng.
+- **Bài học tu dưỡng:** Tránh cố chấp trong những việc nhỏ, học cách buông bỏ điều không thể thay đổi để tâm trí luôn an nhiên tự tại.`;
   }
+
+  // 6. Cung vị chuyên biệt khi người dùng click vào cung bất kỳ (Huynh Đệ, Điền Trạch, Phúc Đức, Phụ Mẫu, Tử Tức, Nô Bộc, Thiên Di...)
+  if (selectedPalaceName && !['命宫', '命'].includes(selectedPalaceName) && topic !== 'overview') {
+    return interpretPalaceDeep(chart, selectedPalaceName);
+  }
+
+  // 7. Mặc định: Tổng quan Mệnh Cách
+  return `**【Mệnh cách định tính】**
+Lá số sinh năm **${STEMS[chart.lunarInfo?.yearStem ?? 0]}${BRANCHES[chart.lunarInfo?.yearBranch ?? 0]}** (${chart.yinYangGender === '阳男' ? 'Dương Nam' : chart.yinYangGender === '阳女' ? 'Dương Nữ' : chart.yinYangGender === '阴男' ? 'Âm Nam' : 'Âm Nữ'}), Nạp âm Cục số: **${getWuXingJuVi(chart.wuxingJuName)}**.
+Mệnh Cung an tại **${getPalaceVi(mingPalace?.name || '')}** (${BRANCHES[chart.mingGongBranch]}), Thân Cung an tại **${getPalaceVi(shenPalace?.name || '')}** (${BRANCHES[chart.shenGongBranch]}).
+Tinh diệu tọa thủ bản cung: ${formatStarsVi(mingPalace)}.
+Bản mệnh thuộc dạng cách **${starRole}**. Cốt cách mang khí chất: ${starDesc}
+
+**【Ý nghĩa Thân Cung & Hậu vận】**
+${shenMeaning}
+
+**【Chính tinh giải đoán】**
+Chính tinh thủ Mệnh: **${mingStarsLabel}**
+- Khí chất cốt tủy: ${starDesc}
+- Khẩu quyết Thầy Nghê Hải Hà (*Thiên Kỷ*): "*${starQuote}*"
+
+**【Tam phương tứ chính】**
+Thế tam giác Mệnh - Quan - Tài - Di tạo thành thế chân vạc định hình đời người:
+- **Cung Quan Lộc (Sự nghiệp):** Tọa tại ${careerPalace?.name ? getPalaceVi(careerPalace.name) : 'Quan Lộc'}, hội tụ: ${formatStarsVi(careerPalace)}.
+- **Cung Tài Bạch (Tài chính):** Tọa tại ${wealthPalace?.name ? getPalaceVi(wealthPalace.name) : 'Tài Bạch'}, hội tụ: ${formatStarsVi(wealthPalace)}.
+- **Cung Thiên Di (Đối ngoại):** Tọa tại ${travelPalace?.name ? getPalaceVi(travelPalace.name) : 'Thiên Di'}, hội tụ: ${formatStarsVi(travelPalace)}.
+${patterns.length > 0 ? `Các cách cục đắc định trong cổ thư:\n${patternHighlights}` : 'Tam phương hội tụ tinh diệu bình hòa, thuộc mẫu hình tích lũy trung hậu, càng về hậu vận càng vững chãi.'}
+
+**【Đại Hạn hiện tại】**
+Bản mệnh đang tại đại hạn chuyển biến của cuộc đời, luân chuyển theo chiều vòng vận. Năng lượng đại hạn kích hoạt các cung vị then chốt, đòi hỏi sự linh hoạt và nắm bắt thời cơ.
+
+**【Ưu thế & Lưu ý】**
+- **Ưu thế thiên bẩm:** ${mingMajorStars.length > 0 ? `Nội lực vững chắc từ tinh diệu ${mingStarsLabel}, tư duy độc lập và năng lực kiên trì vượt khó.` : 'Thích nghi uyển chuyển, khéo nắm bắt thời cơ nhờ mượn lực tinh diệu xung chiếu.'}
+- **Lời răn Thầy Nghê Hải Hà (*Thiên Kỷ*):** "Tiên thiên Mệnh chiếm 1/3, Phong thủy Địa lý chiếm 1/3, Nhân sự nỗ lực chiếm 1/3. Nếu ta biết mệnh, sửa đổi thói quen và đặt mình đúng phong thủy thì 2/3 chắc chắn thắng 1/3 mệnh trời!"`;
 
   return `**【Tổng luận ZHANXING MINGSHU】**\nLá số cấu trúc cân đối, tinh diệu phát huy đúng vị trí. Hãy vững tâm tiến bước và tự tin làm chủ vận mệnh của mình!`;
 }

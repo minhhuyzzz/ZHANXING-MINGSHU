@@ -68,7 +68,7 @@ export default function ChatPanel({ chart }: ChatPanelProps) {
             if (data === '[DONE]') break;
             try {
               const parsed = JSON.parse(data);
-              const delta = parsed.delta?.text ?? '';
+              const delta = parsed.choices?.[0]?.delta?.content ?? parsed.delta?.text ?? '';
               assistantText += delta;
               setMessages(prev => {
                 const updated = [...prev];

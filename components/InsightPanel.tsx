@@ -21,6 +21,8 @@ interface InsightPanelProps {
   chart: ZiweiChart;
   selectedPalace?: Palace | null;
   selectedSiHua?: SelectedSiHua | null;
+  view?: TimeView;
+  liunianYear?: number;
 }
 
 const TOPICS = [
@@ -195,7 +197,7 @@ function AiContent({ text, streaming }: { text: string; streaming?: boolean }) {
   );
 }
 
-export default function InsightPanel({ chart, selectedPalace, selectedSiHua }: InsightPanelProps) {
+export default function InsightPanel({ chart, selectedPalace, selectedSiHua, view, liunianYear }: InsightPanelProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
@@ -388,6 +390,42 @@ Hành động thực tế để tối ưu hóa cát tường và hóa giải tr�
             );
           })}
         </div>
+
+        {/* Banner Luận giải Lưu Niên / Đại Hạn động theo TimeNav */}
+        {view === 'liunian' && liunianYear && (
+          <div className="mt-2 flex items-center justify-between px-2.5 py-1.5 rounded-lg transition-all"
+            style={{ background: 'rgba(212,168,67,0.08)', border: '1px solid rgba(212,168,67,0.25)' }}>
+            <span className="text-[11px] font-medium" style={{ color: 'var(--t-gold)' }}>
+              ✦ Đang xem Lưu Niên {liunianYear}
+            </span>
+            <button
+              type="button"
+              onClick={() => sendMessage(`Hãy phân tích chi tiết vận thế Lưu Niên năm ${liunianYear} của tôi?`, false)}
+              disabled={loading}
+              className="px-2 py-0.5 rounded text-[10px] font-semibold transition-all hover:brightness-110 disabled:opacity-50"
+              style={{ background: 'var(--t-gold)', color: '#000' }}
+            >
+              Luận giải năm {liunianYear} →
+            </button>
+          </div>
+        )}
+
+        {view === 'daxian' && (
+          <div className="mt-2 flex items-center justify-between px-2.5 py-1.5 rounded-lg transition-all"
+            style={{ background: 'rgba(168,85,247,0.08)', border: '1px solid rgba(168,85,247,0.25)' }}>
+            <span className="text-[11px] font-medium text-purple-400">
+              ✦ Đang xem Đại Hạn {chart.daXians[chart.currentDaXianIndex]?.startAge}–{chart.daXians[chart.currentDaXianIndex]?.endAge} tuổi
+            </span>
+            <button
+              type="button"
+              onClick={() => sendMessage(`Hãy phân tích chuyên sâu vận trình Đại Hạn 10 năm hiện tại của tôi?`, false)}
+              disabled={loading}
+              className="px-2 py-0.5 rounded text-[10px] font-semibold bg-purple-500 text-white transition-all hover:brightness-110 disabled:opacity-50"
+            >
+              Luận Đại Hạn →
+            </button>
+          </div>
+        )}
       </div>
 
       {/* ── Messages ── */}

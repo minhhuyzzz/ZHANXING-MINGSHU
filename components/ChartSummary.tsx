@@ -28,6 +28,40 @@ const PatternLevelStyle = {
   caution: { dot: 'bg-orange-500', label: 'text-orange-500', badge: 'text-orange-500 bg-orange-500/10 border-orange-500/25' },
 };
 
+const NATURE_VI: Record<string, string> = {
+  '帝王星': 'Đế Vương Chi Tinh',
+  '智慧星': 'Trí Huệ Chi Tinh',
+  '贵人星': 'Quang Minh Chi Tinh',
+  '财帛星': 'Tài Bạch Chi Tinh',
+  '福德星': 'Phúc Đức Chi Tinh',
+  '桃花星': 'Đào Hoa Chi Tinh',
+  '财库星': 'Tài Khố Chi Tinh',
+  '财富星': 'Phú Tinh & Điền Chủ',
+  '是非星': 'Khẩu Tài & Ám Tinh',
+  '印绶星': 'Ấn Tinh Phò Tá',
+  '荫庇星': 'Ấm Tinh Hóa Giải',
+  '将帅星': 'Dũng Tướng Chi Tinh',
+  '变动星': 'Tiên Phong Hao Tinh',
+  '空宫':   'Mệnh Vô Chính Diệu',
+};
+
+const KEYWORD_VI: Record<string, string> = {
+  '尊贵': 'Tôn quý', '独立': 'Độc lập', '领导': 'Lãnh đạo',
+  '智慧': 'Trí tuệ', '机变': 'Cơ biến', '善谋': 'Thiện mưu',
+  '阳刚': 'Quang minh', '官贵': 'Quan quý', '慷慨': 'Khẳng khái',
+  '财富': 'Tài phú', '刚毅': 'Cương nghị', '果断': 'Quyết đoán',
+  '温和': 'Ôn hòa', '享福': 'Hưởng phúc', '随缘': 'Tùy duyên',
+  '才艺': 'Tài nghệ', '桃花': 'Đào hoa', '多变': 'Biến hóa',
+  '财库': 'Tài khố', '稳重': 'Điềm đạm', '保守': 'Vững chãi',
+  '柔美': 'Nhu mỹ', '细腻': 'Tinh tế',
+  '欲望': 'Dục vọng', '多才': 'Đa tài',
+  '善辩': 'Hùng biện', '多思': 'Đa tư', '口才': 'Khẩu tài',
+  '辅佐': 'Phụ tá', '行政': 'Chính trực', '稳健': 'Vững vàng',
+  '荫护': 'Ấm hộ', '医药': 'Y dược', '长辈': 'Tiền bối',
+  '将星': 'Tướng tinh', '果决': 'Quả quyết', '孤克': 'Khai phá',
+  '开创': 'Tiên phong', '变动': 'Đổi mới', '破旧': 'Phá cũ',
+};
+
 export default function ChartSummary({ chart }: ChartSummaryProps) {
   const patterns = detectPatterns(chart);
   const { stars: mingStars, keywords, nature } = getMingGongSummary(chart);
@@ -78,7 +112,7 @@ export default function ChartSummary({ chart }: ChartSummaryProps) {
               )}
             </div>
             {nature && (
-              <div className="text-[10px] mt-1" style={{ color: 'var(--t-gold)', opacity: 0.5 }}>{nature}</div>
+              <div className="text-[10px] mt-1" style={{ color: 'var(--t-gold)', opacity: 0.7 }}>{NATURE_VI[nature] || nature}</div>
             )}
           </div>
 
@@ -93,7 +127,7 @@ export default function ChartSummary({ chart }: ChartSummaryProps) {
                       background: 'rgba(212,168,67,0.08)',
                       border: '1px solid rgba(212,168,67,0.15)',
                     }}>
-                    {k}
+                    {KEYWORD_VI[k] || k}
                   </span>
                 ))}
               </div>
